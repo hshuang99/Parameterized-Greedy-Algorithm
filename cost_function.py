@@ -39,3 +39,8 @@ def cost_mat(mat, p):
                         hammingWeight +=  mat[i][j]
                 ret += hammingWeight ** 4
             return ret
+        case "5":
+            I = np.eye(SIZE)
+            P = np.random.permutation(I)
+            ret = float(np.sum(np.logical_xor(mat, P)))
+            return ret

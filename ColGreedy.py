@@ -46,5 +46,6 @@ def colGreedy(mat, inverse, L_r, L_c, Ls_r, Ls_c, row_op, col_op, p_value, flag,
         if depth > LIMIT: #the depth is over latest minimum depth
             print(f"Depth {depth} over minimum limit {LIMIT}, so break this iteration")
             flag = True
-    
+            return L_r, L_c, Ls_r, Ls_c, mat, row_op, col_op, depth, flag
+
     return L_r, L_c, Ls_r, Ls_c, mat, row_op, col_op, depth, flag

@@ -68,6 +68,8 @@ def row_or_Col(mat, inverse, L_r, L_c, Ls_r, Ls_c, row_op, col_op, p_value, flag
                 escapeCandidates.sort(key=lambda x: x[0])
                 best_escape = escapeCandidates[0]
 
+                print(f"The best_escape: {best_escape}")
+
                 print(f"Escaping with operation: ({best_escape[1]}, {best_escape[2]}, {best_escape[3]})")
                 print(f"Accepting cost increase from {minm_cost} to {best_escape[0]}")
 
@@ -96,5 +98,6 @@ def row_or_Col(mat, inverse, L_r, L_c, Ls_r, Ls_c, row_op, col_op, p_value, flag
         if depth > LIMIT:
             print(f"Depth {depth} over minimum limit {LIMIT}, so break this iteration")
             flag = True
+            return L_r, L_c, Ls_r, Ls_c, mat, row_op, col_op, depth, flag
 
     return L_r, L_c, Ls_r, Ls_c, mat, row_op, col_op, depth, flag
