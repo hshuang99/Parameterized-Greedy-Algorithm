@@ -10,7 +10,6 @@ def colGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op, p_va
     SIZE = len(mat)
     minm_cost = sys.float_info.max
     LIMIT = sys.float_info.max
-    select_list = []
     row_visi = [0]*SIZE; col_visi = [0]*SIZE
     close_permu = False
     config = configparser.ConfigParser(); config.optionxform = str;
@@ -31,12 +30,12 @@ def colGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op, p_va
         print("Current Minimum Cost:", minm_cost)
 
         L_col = operations.L_collection(L_col, col_visi, SIZE)
-        select_list, minm_cost = selector.col_op_sel(L_col, L_col_cst, mat, inverse, p_value, minm_cost, select_list)
+        select_list, minm_cost = selector.ops_sel([], [], L_col, L_col_cst, mat, inverse, p_value, minm_cost, select_list, 1)
 
         #if the matrix is not achieve can depth close_permu property
         if not close_permu:
             L_row = operations.L_collection(L_row, row_visi, SIZE)
-            select_list, minm_cost = selector.row_op_sel(L_row, L_row_cst, mat, inverse, p_value, minm_cost, select_list)
+            select_list, minm_cost = selector.ops_sel(L_row, L_row_cst, [], [], mat, inverse, p_value, minm_cost, select_list, 0)
 
         print("The select list and current minimum cost: ", select_list, minm_cost)
                     

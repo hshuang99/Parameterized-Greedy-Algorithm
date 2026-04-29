@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 import os
-from modifiedImprovedGreedy import modifiedImprovedGreedy
+from chosenImprovedGreedy import chosenImprovedGreedy
 import threading
 import itertools
 
@@ -21,7 +21,7 @@ def main(Matrix, greedy, p_value, times):
     print(matrix)
     filename = os.path.splitext(os.path.basename(Matrix))[0]
     for i in range(0, int(times)):
-        modifiedImprovedGreedy(matrix, filename, greedy, p_value, i)
+        chosenImprovedGreedy(matrix, filename, greedy, p_value, i)
 
 """
 Spawn one thread per combination of (Greedy x CostFunction x NormType x PValue).

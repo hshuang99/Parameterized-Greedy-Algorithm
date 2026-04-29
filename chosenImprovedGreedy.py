@@ -5,7 +5,7 @@ import random
 import copy
 from RowGreedy import rowGreedy
 from ColGreedy import colGreedy
-from row_or_Col_Greedy import row_or_Col
+from Row_or_Col_Greedy import row_or_Col
 from ParallelGreedy import parallelGreedy
 ALL_COST_MAT_NAME = {"log": "-1", "sum": "1", "sq": "2", "origin": "3"}
 REVERSED = {v: k for k, v in ALL_COST_MAT_NAME.items()}
@@ -16,7 +16,7 @@ This function will execute the four kind of greedy algorithm depends on type par
 - Row_or_Column
 - Parallel
 '''
-def modifiedImprovedGreedy(mat, matName, greedy, p_value, occur):
+def chosenImprovedGreedy(mat, matName, greedy, p_value, occur):
     # Define variables
     SIZE = len(mat); depth = 0
     minm = sys.float_info.max; minm_size = sys.float_info.max

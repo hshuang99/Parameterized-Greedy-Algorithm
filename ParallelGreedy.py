@@ -10,7 +10,6 @@ def parallelGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op,
     SIZE = len(mat)
     minm_cost = sys.float_info.max; best_row_cst = sys.float_info.max; best_col_cst = sys.float_info.max
     LIMIT = sys.float_info.max
-    select_list = []
     row_visi = [0]*SIZE; col_visi = [0]*SIZE
     config = configparser.ConfigParser(); config.optionxform = str; 
     if "RAND" not in fileName:
@@ -28,8 +27,8 @@ def parallelGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op,
         print("Current cost:", minm_cost)
         print("Row visited:", row_visi)
         print("Col visited:", col_visi)
-        L_row = []; L_col = []
         select_list = []
+        L_row = []; L_col = []
         L_row_cst = []; L_col_cst = []
         B_row = []; B_col = []
 
@@ -42,10 +41,10 @@ def parallelGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op,
 
         if not close_permu:
             L_row = operations.L_collection(L_row, row_visi, SIZE)
-            B_row, best_row_cst = selector.B_row_sel(L_row, L_row_cst, mat, inverse, p_value, minm_cost, best_row_cst, B_row)
+            B_row, best_row_cst = selector.ops_sel(L_row, L_row_cst, [], [], mat, inverse, p_value, minm_cost, B_row, 0)
 
         L_col = operations.L_collection(L_col, col_visi, SIZE)
-        B_col, best_col_cst = selector.B_col_sel(L_col, L_col_cst, mat, inverse, p_value, minm_cost, best_col_cst, B_col)
+        B_col, best_col_cst = selector.ops_sel([], [], L_col, L_col_cst, mat, inverse, p_value, minm_cost, B_col, 1)
 
         print("The B_row and best_row_cst:", B_row, best_row_cst)
         print("The B_col and best_col_cst:", B_col, best_col_cst)
@@ -65,9 +64,9 @@ def parallelGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op,
 
             escapeCandidates = []
 
-            escapeCandidates = selector.rand_row_sel(L_row, mat, inverse, p_value, escapeCandidates)
+            escapeCandidates = selector.rand_ops_sel(L_row, [], mat, inverse, p_value, escapeCandidates, 0)
 
-            escapeCandidates = selector.rand_col_sel(L_col, mat, inverse, p_value, escapeCandidates)
+            escapeCandidates = selector.rand_ops_sel([], L_col, mat, inverse, p_value, escapeCandidates, 1)
 
             if len(escapeCandidates) > 0:
                 escapeCandidates.sort(key=lambda x: x[0])

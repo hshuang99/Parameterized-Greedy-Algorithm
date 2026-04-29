@@ -1,0 +1,215 @@
+\chapter{Cost Functions}
+The `costMat` function serves as our primary heuristic, allowing for the selection of five distinct cost metrics. These metrics—logarithmic, linear sum, square, cubic, and quartic—are controlled by a parameter $p$, which determines the mathematical weight assigned to the matrix reduction process.
+
+\section{Log}
+This cost function is derived from the greedy framework proposed by \cite{9475957}, which utilizes the logarithm of the Hamming weight for each row as follows:
+$$h_{log}(A) = \sum_{i}log_{2}(\sum_{j}a_{i,j})$$
+
+\section{Sum}
+In addition to the logarithmic metric, the greedy framework by \cite{9475957} considers the cumulative Hamming weight of each row as follows:
+$$h_{sum}(A) = \sum_{i}\sum_{j}a_{i,j}$$
+
+\section{Square}
+Following the methodology of \cite{cryptoeprint:2024/381}, this cost function utilizes the square of each row's Hamming weight, defined as follows:
+$$h_{sq}(A) = \sum_{i}(\sum_{j}a_{i,j})^{2}$$
+
+\section{The Role of Matrix Cost Functions in Greedy Optimization}
+The `costMat` function is integrated into two distinct phases of our greedy algorithm: the initial candidate selection and the subsequent layer evaluation.
+
+\subsection{Globally}
+First, the algorithm evaluates the global maximum cost to establish a relaxation range; this allows the search to include a broader set of available operators rather than being restricted to the absolute minimum.
+
+\begin{algorithm}
+\caption{Greedy}
+\begin{algorithmic}[1]
+\State $\vdots$
+\While{$mat$ != Permutation}
+	\State $\vdots$
+	\If{p != 1}
+	\State $H_r$ $\leftarrow$ costMat($mat$, $p$) + costMat($inv^{T}$, $p$)
+	\State $H_c$ $\leftarrow$ costMat($mat^{T}$, $p$) + costMat($inv$, $p$)
+	\State minm $\leftarrow$ max\{$H_r$, $H_c$\}
+\Else
+	\State minm $\leftarrow$ costMat($mat$, $p$) + costMat($inv$, $p$)
+\EndIf
+\State $\vdots$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+Following the greedy framework established by Shi and Feng, we define the cost metrics $H_{r}$ and $H_{c}$ to treat row and column operations asymmetrically. Specifically, the row Hamming weight is evaluated when performing row operations ($row_{op}$), while the column Hamming weight is prioritized during column operations ($col_{op}$). 
+
+To explore the set of linear reversible operators for synthesizing quantum cryptographic circuits, we employ the following guidance:
+$$H_{r} = costMat(A, p) + costMat((A^{-1})^{T}, p)$$
+$$H_{c} = costMat(A^{T}, p) + costMat(A^{-1}, p)$$
+
+\subsection{Locally}
+In the second phase, the algorithm performs a local evaluation to identify individual operators that minimize the cost function. If a candidate operator's cost is lower than the current minimum, it is accepted as a valid transformation. 
+
+Once all potential control and target qubit pairs have been visited, the resulting set of parallel operations is appended to the `select\_list` as a single circuit layer.
+
+The availableRowOperatorSelection and availableColOperatorSelection functions influence the cost matrix calculation in the Row and Col greedy algorithms.
+
+\begin{algorithm}
+\caption{availableRowOperatorSelection}
+\begin{algorithmic}[1]
+\Require $L_{row}, L_{row}^{cost}, mat_{n \times n}$, $inv_{n \times n}, p, minm$ and select\_list
+\Ensure select\_list, $minm$
+\For{$row_{op} \in L_{row}$}
+	\State temp\_mat $\leftarrow$ row\_i2j($mat$, $row_{op}$[0], $row_{op}$[1])
+	\State temp\_inv $\leftarrow$ col\_i2j($inv$, $row_{op}$[1], $row_{op}$[0])
+	\If{p != 1}
+		\State $L_{row}^{cost}$.append(costMat(temp\_mat, p)+costMat(temp\_inv$^{T}$, p))
+	\Else
+		\State $L_{row}^{cost}$.append(costMat(temp\_mat, p)+costMat(temp\_inv, p))
+	\EndIf
+\EndFor
+\For{index, $row_{op}^{cost}$ in $L_{row}^{cost}$}
+	\If{$row_{op}^{cost} < minm$}
+		\State select\_list.clear()
+		\State select\_list.append(($L_{row}$[index][0], $L_{row}$[index][1], 0))
+		\State $minm = row_{op}^{cost}$
+	\ElsIf{$row_{op}^{cost} == minm$}
+		\State select\_list.append(($L_{row}$[index][0], $L_{row}$[index][1], 0))
+    \EndIf
+\EndFor
+\State \Return select\_list, $minm$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{availableColOperatorSelection}
+\begin{algorithmic}[1]
+\Require $L_{col}, L_{col}^{cost}, mat_{n \times n}$, $inv_{n \times n}, p, minm$ and select\_list
+\Ensure select\_list, $minm$
+\For{$col_{op} \in L_{col}$}
+	\State temp\_mat $\leftarrow$ col\_i2j($mat$, $col_{op}$[0], $col_{op}$[1])
+	\State temp\_inv $\leftarrow$ row\_i2j($inv$, $col_{op}$[1], $col_{op}$[0])
+	\If{p != 1}
+		\State $L_{col}^{cost}$.append(costMat(temp\_mat$^{T}$, p)+costMat(temp\_inv, p))
+	\Else
+		\State $L_{col}^{cost}$.append(costMat(temp\_mat, p)+costMat(temp\_inv, p))
+	\EndIf
+\EndFor
+\For{index, $col_{op}^{cost}$ in $L_{col}^{cost}$}
+	\If{$col_{op}^{cost} < minm$}
+		\State select\_list.clear()
+		\State select\_list.append(($L_{col}$[index][0], $L_{col}$[index][1], 1))
+		\State $minm = col_{op}^{cost}$
+	\ElsIf{$col_{op}^{cost} == minm$}
+		\State select\_list.append(($L_{col}$[index][0], $L_{col}$[index][1], 1))
+    \EndIf
+\EndFor
+\State \Return select\_list, $minm$
+\end{algorithmic}
+\end{algorithm}
+
+Similarly, the modified and avoidLocalMinima versions of these functions influence the cost matrix in the Row-or-Col and Parallel greedy algorithms.
+
+For the Row-or-Column and Parallel strategies, which evaluate two directional operators simultaneously, the algorithm selects the layer that minimizes the total matrix cost. 
+
+To facilitate this, we implement an intermediate storage list for candidate operations and utilize their respective cost impacts as the primary selection criterion. 
+
+This represents a departure from standard operator selection, as detailed in the following modifications:
+
+\begin{algorithm}
+\caption{modifiedAvailableRowOperatorSelection}
+\begin{algorithmic}[1]
+\Require $L_{row}, L_{row}^{cost}, mat_{n \times n}$, $inv_{n \times n}, p, minm, best_{row}^{cost}$ and $B_{row}$
+\Ensure $B_{row}, best_{row}^{cost}, minm$
+\For{$row_{op} \in L_{row}$}
+	\State temp\_mat $\leftarrow$ row\_i2j($mat$, $row_{op}$[0], $row_{op}$[1])
+	\State temp\_inv $\leftarrow$ col\_i2j($inv$, $row_{op}$[1], $row_{op}$[0])
+	\If{p != 1}
+		\State $L_{row}^{cost}$.append(costMat(temp\_mat, p)+costMat(temp\_inv$^{T}$, p))
+	\Else
+		\State $L_{row}^{cost}$.append(costMat(temp\_mat, p)+costMat(temp\_inv, p))
+	\EndIf
+\EndFor
+\For{index, $row_{op}^{cost}$ in $L_{row}^{cost}$}
+	\If{$row_{op}^{cost} < minm$}
+		\If{$row_{op}^{cost} < best_{row}^{cost}$}
+			\State $B_{row}$.clear()
+			\State $best_{row}^{cost} = row_{op}^{cost}$
+			\If{$row_{op}^{cost} == best_{row}^{cost}$}
+				\State $B_{row}$.append(($L_{row}$[index][0], $L_{row}$[index][1], 0))
+            \EndIf
+        \EndIf
+    \EndIf
+\EndFor
+\State \Return $B_{row}, best_{row}^{cost}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{modifiedAvailableColOperatorSelection}
+\begin{algorithmic}[1]
+\Require $L_{col}, L_{col}^{cost}, mat_{n \times n}$, $inv_{n \times n}, p, minm, best_{col}^{cost}$ and $B_{col}$
+\Ensure $B_{col}, best_{col}^{cost}, minm$
+\For{$col_{op} \in L_{col}$}
+	\State temp\_mat $\leftarrow$ col\_i2j($mat$, $col_{op}$[0], $col_{op}$[1])
+	\State temp\_inv $\leftarrow$ row\_i2j($inv$, $col_{op}$[1], $col_{op}$[0])
+	\If{p != 1}
+		\State $L_{col}^{cost}$.append(costMat(temp\_mat$^{T}$, p)+costMat(temp\_inv, p))
+	\Else
+		\State $L_{col}^{cost}$.append(costMat(temp\_mat, p)+costMat(temp\_inv, p))
+	\EndIf
+\EndFor
+\For{index, $col_{op}^{cost}$ in $L_{col}^{cost}$}
+	\If{$col_{op}^{cost} < minm$}
+		\If{$col_{op}^{cost} < best_{col}^{cost}$}
+			\State $B_{col}$.clear()
+			\State $best_{col}^{cost} = col_{op}^{cost}$
+			\If{$col_{op}^{cost} == best_{col}^{cost}$}
+				\State $B_{col}$.append(($L_{col}$[index][0], $L_{col}$[index][1], 1))
+            \EndIf
+        \EndIf
+    \EndIf
+\EndFor
+\State \Return $B_{col}, best_{col}^{cost}$
+\end{algorithmic}
+\end{algorithm}
+
+To address the issue of local minima, we implemented a stagnation recovery mechanism. When the algorithm becomes 'stuck'—meaning no cost-reducing operations are found—the greedy constraint is temporarily relaxed. 
+
+During these instances, the algorithm accepts operations that slightly increase the current minimum cost. 
+
+This heuristic perturbation enables the search to bypass stagnant states and discover subsequent operations that lead to a more optimal global reduction.
+
+\begin{algorithm}
+\caption{avoidLocalMinimaRowOperatorSelection}
+\begin{algorithmic}[1]
+\Require $L_{row}, mat_{n \times n}$, $inv_{n \times n}, p$ and escapeCandidates
+\Ensure escapeCandidates
+\For{$row_{op} \in L_{row}$}
+	\State temp\_mat $\leftarrow$ row\_i2j($mat$, $row_{op}$[0], $row_{op}$[1])
+	\State temp\_inv $\leftarrow$ col\_i2j($inv$, $row_{op}$[1], $row_{op}$[0])
+	\If{p != 1}
+		\State temp\_cost $\leftarrow$ costMat(temp\_mat, p)+costMat(temp\_inv$^{T}$, p)
+	\Else
+		\State temp\_cost $\leftarrow$ costMat(temp\_mat, p)+costMat(temp\_inv, p)
+	\EndIf
+	\State escapeCandidates.append((temp\_cost, $row_{op}$[0], $row_{op}$[1], 0))
+\EndFor
+\State \Return escapeCandidates
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{avoidLocalMinimaColOperatorSelection}
+\begin{algorithmic}[1]
+\Require $L_{col}, mat_{n \times n}$, $inv_{n \times n}, p$ and escapeCandidates
+\Ensure escapeCandidates
+\For{$col_{op} \in L_{col}$}
+	\State temp\_mat $\leftarrow$ col\_i2j($mat$, $col_{op}$[0], $col_{op}$[1])
+	\State temp\_inv $\leftarrow$ row\_i2j($inv$, $col_{op}$[1], $col_{op}$[0])
+	\If{p != 1}
+		\State temp\_cost $\leftarrow$ costMat(temp\_mat$^{T}$, p)+costMat(temp\_inv, p)
+	\Else
+		\State temp\_cost $\leftarrow$ costMat(temp\_mat, p)+costMat(temp\_inv, p)
+	\EndIf
+	\State escapeCandidates.append((temp\_cost, $col_{op}$[0], $col_{op}$[1], 1))
+\EndFor
+\State \Return escapeCandidates
+\end{algorithmic}
+\end{algorithm}

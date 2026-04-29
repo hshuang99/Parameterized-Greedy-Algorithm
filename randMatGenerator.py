@@ -32,17 +32,19 @@ def gf2_inverse(bin_matrix):
 
     return aug[:, n:]  # Right half is the inverse
 
-def main(n):
+def main(n, rng_seed):
     while True:
+        np.random.seed(rng_seed)
         bin_matrix = np.random.randint(0, 2, size=(n, n))
         inv = gf2_inverse(bin_matrix)
         if inv is not None:
             return bin_matrix, inv
 
 if __name__ == "__main__":
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
         n = int(sys.argv[1])
-        bin_matrix, inv = main(n)
+        rng_seed = int(sys.argv[2])
+        bin_matrix, inv = main(n, rng_seed)
         print("Random Binary Matrix:\n", bin_matrix)
         print("\nGF(2) Inverse:\n", inv)
 
@@ -50,9 +52,9 @@ if __name__ == "__main__":
         identity_check = (bin_matrix @ inv) % 2
         if np.array_equal(identity_check, np.eye(n, dtype=int)):
             print("\nVerified: A @ A^-1 = I (mod 2) ✅")
-            np.savetxt('rand_matrix', bin_matrix, fmt='%d')
+            np.savetxt(f'rand_matrix_{rng_seed}', bin_matrix, fmt='%d')
         else:
             print("\nVerification failed!")
     else:
-        print(f"Usage: python3 {sys.argv[0]} <SIZE>")
+        print(f"Usage: python3 {sys.argv[0]} <SIZE> <RANDOM SEED>")
         sys.exit(1)

@@ -44,7 +44,7 @@ def is_permutation_matrix(matrix):
     """
     Checks if a given matrix is a permutation matrix.
     Args:
-        matrix: A 2D list or NumPy array representing the matrix.
+        matrix M: A 2D list or NumPy array representing the matrix.
     Returns:
         True if the matrix is a permutation matrix, False otherwise.
     """
