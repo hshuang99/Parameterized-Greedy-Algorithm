@@ -1,95 +1,143 @@
-\documentclass[a4paper,12pt,numbers=noenddot]{scrreprt}
-\usepackage[left= 3.5cm,right = 3cm, bottom = 3cm, top = 3cm]{geometry}
-\usepackage[onehalfspacing]{setspace}
+\documentclass{nthu_thesis}
 
-% ============= Settings for the document =============
-\input{settings}
-% Switch between englich and german be using the %.
-% \useGermanVersiontrue % German version
-\useGermanVersionfalse % English version
+\geometry{
+  a4paper,
+  left=3cm,
+  right=3cm,
+  top=3cm,
+  bottom=3cm,
+  bindingoffset=0mm,
+  headheight=0pt,
+  headsep=0pt,
+  footskip=18pt
+}
+\setlength{\hoffset}{0pt}
+\setlength{\oddsidemargin}{15.5pt}
+\setlength{\marginparwidth}{0pt}
+\setlength{\marginparsep}{0pt}
 
-% Choose your department be using the %.
-% \useAllgemeintrue % Default template
-% \useBahntechnologieundMobitlitaettrue % Bahntechnologie und Mobitlität
-% \useDigitalBusinessundInnovationtrue % Digital Business und Innovation
-% \useGesundheittrue % Gesundheit
-% \useInformatikundSecuritytrue % Informatik und Security
-\useMedienundDigitaleTechnologientrue % Medien und Digitale Technologien
-% \useSozialestrue % Soziales
-
-\input{premable}
-
-% ============= Begin of the main document =============
 \begin{document}
-% Title Page will change automatic
-\ifuseGermanVersion 
-	\include{TemplateElements/TitelPage_de}
-\else
-	\include{TemplateElements/TitelPage_en}
-\fi
+\pagestyle{plain} %This is the default style for most document classes. It places the page number centered in the footer, with an empty header.
+\begin{CJK}{UTF8}{bkai}
 
-\chapter*{Glossary}
-\input{acronym}
-\pagenumbering{Roman} % roman page numbering
+%%% Necessary fields for this thesis data %%%
+% Add your custom class definitions here if any
 
-% Table of content
-\setcounter{tocdepth}{1} % Levels in the table of content
+\newcommand{\degreeZH}{碩}  % 畢業學位，碩 for masters 或 博 for PHD
+\newcommand{\degreeEN}{Master's Thesis}  %  Fill in your degree "Master's Thisis" for masters 或 "Doctoral Dissertation" for PHD
+\newcommand{\titleZH}{這裡填入論文中文題名} % 此括弧內填入論文中文標題Chinese title here
+\newcommand{\titleEN}{Type English Title Here} % 此括弧內填入論文英文標題
+\newcommand{\instituteZH}{資訊安全研究所} % 此括弧內填入畢業生所屬學系班
+\newcommand{\instituteEN}{Institute of Information Security} % Graduation Dept./Inst. Name
+\newcommand{\studentID}{111164529} %填入畢業生的學號 your student ID
+\newcommand{\studentZH}{黃宏勝} % 此括弧內填入畢業生的中文名字 Graduate's Chinese Name here
+\newcommand{\studentEN}{Hong-Sheng Huang} %此括弧內填入畢業生的英文姓名 Graduate's Eng. Name here
+\newcommand{\advisorZH}{} %此括弧內填入指導教授的中文名字，如有兩個，請自行增加
+\newcommand{\advisorEN}{} % 此括弧內填入 advisor's English Name
+\newcommand{\yearZH}{115} %此括弧內填入畢業年(民國) Year of ROC  ，就是口試日期的那個月
+\newcommand{\monthZH}{7} % Graduation (Oral exam) month of ROC 
+\newcommand{\yearEN}{2026} % Graduation (oral exam) Year  
+\newcommand{\monthEN}{July} % Graduation (oral Exam) month
+
+\input{2025Titlepage}
+
+%intentionally to add a blank page 
+\newpage
+\null
+\thispagestyle{empty}
+\newpage
+
+\input{2025Titlepage}
+ \let\cleardoublepage=\clearpage % Place this after \end{titlepage} for removing the blank page 
+ 
+%\restoregeometry  %back to NTHU required geometry setting
+
+
+% \includepdf[pages=1, angle=0, fitpaper=true,
+%     keepaspectratio, pagecommand={{\thispagestyle{empty}}}]{./front/Advisor Approval Form.pdf}
+
+%\cftaddtitleline{<ext>}{<kind>}{<text>}{<page>} intead of using \addcontentsline command  for without page numbering
+
+% \cftaddtitleline{toc}{chapter}{指導教授推薦書}{}
+
+% \includepdf[pages=1, angle=0, fitpaper=true,
+%        keepaspectratio, pagecommand={{\thispagestyle{empty}}},offset=-0.0cm 0.0cm]{./front/Thesis Review Form.pdf} % offset=+right +up
+
+% \cftaddtitleline{toc}{chapter}{考試委員審定書}{}
+
+\frontmatter %Use for book class 
+
+%\pagenumbering{roman} %set lowercase Roman numerals for page numbers if set report class
+
+%%% Necessary 中文摘要%%%
+\chapter*{摘要}
+\addcontentsline{toc}{chapter}{摘要}
+\input{front/C_Abstract}    % 插入中文摘要於此 Insert Chinese Abstract
+
+\clearpage
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\input{front/Eng_Abstract}     % Insert English Abstract
+\setcounter{page}{1}  %set page begins with i
+\clearpage
+
+
+
+\chapter*{致謝}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\input{front/acknowledgement}      % Acknowledgement
+\clearpage
+
+% generate Contents of Tables, lists of figures, tables, 
+
 \tableofcontents
-\cleardoubleemptypage
-\pagenumbering{arabic} % arabic page numbering
+\addcontentsline{toc}{chapter}{Table of Contents}
+\clearpage
 
-\setlist[enumerate,1]{label*=\arabic*.,font=\bfseries\sffamily}
+\listoffigures  % Insert list of figures
+\addcontentsline{toc}{chapter}{List of Figures}
+\clearpage
 
-\pagestyle{icmt-fancy}
-% ================================
-% =            CONTENT           =
-% ================================
-\include{Chapters/01_Introduction}
-\include{Chapters/02_RelatedWork}
-\include{Chapters/03_Preliminaries}
-\include{Chapters/04_GreedyAlgorithmsForCNOTGate}
-\include{Chapters/05_CostFunction}
-\include{Chapters/06_ChosenImprovedGreedyAlgorithm}
+\listoftables  % Insert list of tables
+\addcontentsline{toc}{chapter}{List of Tables}
+\clearpage
 
-\pagestyle{icmt-fancy} 
-% List of bibliography (displays cite elements)
-\addcontentsline{toc}{chapter}{\bibname}
-\bibliography{Bibliography}
-\cleardoubleemptypage
-%% List of figures
-\addcontentsline{toc}{chapter}{\listfigurename}
-\listoffigures
-\cleardoubleemptypage
-% List of tables
-\addcontentsline{toc}{chapter}{\listtablename}
-\listoftables
-\cleardoubleemptypage
-% List of code elements
-% \addcontentsline{toc}{chapter}{\lstlistingname}
-% \lstlistoflistings
+%Nomenclature (optional). List unfamiliar terms, symbols, acronyms and their meanings.
+\input{front/Nomenclature}    % if needed Nomenclature
+\addcontentsline{toc}{chapter}{Nomenclature}
+\clearpage
 
+% Contents of Thesis
+
+\mainmatter  %for book class only
+%\pagenumbering{arabic} % already default for book class, Arabic/Indic page numbers, needed for article class
+
+\pagestyle{plain} %This is the default style for most document classes. It places the page number centered in the footer, with an empty header.
+\input{contents/chapter01}
+\input{contents/chapter02}
+\input{contents/chapter03}
+\input{contents/chapter04}
+\input{contents/chapter05}
+
+% 參考文獻  References
+
+\cleardoublepage
+\printbibliography[
+heading=bibintoc,
+title={References}
+]
+
+
+% Appendices  if no appendix, this section can be deleted
+ 
+\appendix   % Signal the start of the appendix section
+
+\chapter*{\centering{Appendices}}
+\addtocontents{toc}{\protect\contentsline {chapter}{Appendices}{}{}}
+
+\input{back/appendix01}
+\input{back/appendix02}
+
+\end{CJK}
 \end{document}
-% ============= End of the main document =============
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
