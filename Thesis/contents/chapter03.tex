@@ -1,0 +1,68 @@
+\chapter{Existing Approach for CNOT Gate Composition}
+
+Building on the work of \cite{cryptoeprint:2024/381}, who proposed an improved depth-oriented algorithm for synthesizing ancilla-free, low-depth CNOT circuits, we developed four distinct greedy strategies to further explore depth-optimized results. 
+
+By utilizing different matrix representations and search heuristics, we implemented the Row, Column, Row-or-Column, and Parallel algorithms. 
+
+The pseudocode and implementation logic for each approach are detailed in the following sections.
+\section{De Brugière et al. Greedy Method}
+
+\section{Shi \& Feng Greedy Method}
+This strategy aims to drive the matrix toward the 'can\_one' condition. Once the 'one' flag is triggered, the algorithm shifts its priority exclusively to row operations to facilitate the final reduction into a permutation matrix.
+\begin{algorithm}
+\caption{Row/Col Greedy}
+\begin{algorithmic}[1]
+\Require $M \in \mathbb{F}_{2}^{n \times n}$, $M' \in \mathbb{F}_{2}^{n \times n}$, $L_{r}, L_{c}, Ls_{r}, Ls_{c}, p$ and over\_depth
+\Ensure $Ls_{r}, Ls_{c}, row_{op}, col_{op}$ that implement permutation matrix with length $d$
+\State SIZE $\leftarrow$ length($M$)
+\State minm $\leftarrow$ system.float\_info.max
+\State select\_list $\leftarrow$ list()
+\State $visi_{row}$ $\leftarrow [\varnothing]$, $visi_{col}$ $\leftarrow [\varnothing]$
+\State close\_permu $\leftarrow$ False
+\State LIMIT $\leftarrow$ LATEST\_MINM\_DEPTH
+\While{$M$ != Permutation}
+	\State select\_list.clear()
+	\State $L_{row}$.clear(), $L_{col}$.clear(), $L_{row}^{cost}$.clear(), $L_{col}^{cost}$.clear()
+	
+	\State $H_{r}, H_{c}$, minm $\leftarrow$ functionCost($M, M', p$)
+    
+    \If{!close\_permu}
+		\State $L_{col} \leftarrow L\_Collection(visi_{row})$
+	    \State select\_list, minm $\leftarrow Row\_Op\_Sel( L_{col}, L_{col}^{cost}, M, M', p)$ 
+    \EndIf
+	\State $L_{row} \leftarrow L\_Collection(visi_{row}$)
+	\Function{availableRowCollection}{$visi_{row}$, SIZE}
+    \State \Return $L_{row}$
+	\EndFunction
+	\Function{availableRowOperatorSelection}{$L_{row}$, $L_{row}^{cost}$, $mat$, $inv$, $p$}
+    \State \Return select\_list, minm
+	\EndFunction
+    
+	\Function{availableOperatorExecution}{select\_list, $L_{r}, L_{c}, Ls_{r}, Ls_{c}$, $mat$, $inv$, $row_{op}, col_{op}$, $visi_{row}, visi_{col}$, $d$, SIZE, one}
+    \State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}$, $mat$, $inv$, $row_{op}, col_{op}$, $visi_{row}, visi_{col}$, $d$, one
+	\EndFunction
+    
+    \If{$d >$  LIMIT}
+	    \State $flag$ $\leftarrow$ True
+	    \State \Return
+    \EndIf
+\EndWhile
+\State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}, mat, row_{op}, col_{op}, d$, flag
+\end{algorithmic}
+\end{algorithm}
+
+\section{Matrix Cost Function}
+
+The `costMat` function serves as our primary heuristic, allowing for the selection of five distinct cost metrics. These metrics—logarithmic, linear sum, square, cubic, and quartic—are controlled by a parameter $p$, which determines the mathematical weight assigned to the matrix reduction process.
+
+\subsection{Log}
+This cost function is derived from the greedy framework proposed by \cite{9475957}, which utilizes the logarithm of the Hamming weight for each row as follows:
+$$h_{log}(A) = \sum_{i}log_{2}(\sum_{j}a_{i,j})$$
+
+\subsection{Sum}
+In addition to the logarithmic metric, the greedy framework by \cite{9475957} considers the cumulative Hamming weight of each row as follows:
+$$h_{sum}(A) = \sum_{i}\sum_{j}a_{i,j}$$
+
+\subsection{Square}
+Following the methodology of \cite{cryptoeprint:2024/381}, this cost function utilizes the square of each row's Hamming weight, defined as follows:
+$$h_{sq}(A) = \sum_{i}(\sum_{j}a_{i,j})^{2}$$

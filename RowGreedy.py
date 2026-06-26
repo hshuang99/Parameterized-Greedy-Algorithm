@@ -10,10 +10,10 @@ def rowGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op, p_va
     SIZE = len(mat)
     minm_cost = sys.float_info.max
     LIMIT = sys.float_info.max
-    config = configparser.ConfigParser(); config.optionxform = str; 
-    if "RAND" not in fileName:
-        config.read(Path("Config")/f'RowConfig_{fileName}.ini')
-        LIMIT = int(config.get('DEPTH', 'rowLimit'))
+    #config = configparser.ConfigParser(); config.optionxform = str; 
+    #if "RAND" not in fileName:
+    #    config.read(Path("Config")/f'RowConfig_{fileName}.ini')
+    #    LIMIT = int(config.get('DEPTH', 'rowLimit'))
     close_permu = False
     row_visi = [0]*SIZE; col_visi = [0]*SIZE
 

@@ -1,0 +1,20 @@
+\chapter{Introduction}
+
+\section{Motivation}
+Quantum Computation bring some new direction for traditioanl complicated tasks that too difficult to simulate on a classical(current) computer, such as 
+
+Quantum cryptography, as the name suggests, utilizes the cryptographic mechanisms underlying quantum circuits. To improve efficiency, it is essential to find more optimized implementations for these circuits. But in quantum computing, many applications rely heavily on linear reversible circuits; therefore, deploying efficient methods to reduce their computational cost is key to providing more practical algorithms.
+
+Currently, most crypto-systems are constructed using a significant number of CNOT gates in quantum circuit. Drawing inspiration from the field of Very Large Scale Integration (VLSI), we aim to reduce quantum algorithm costs by focusing on circuit depth as our primary metric, targeting linear scaling.
+
+In this work, we propose an enhancement to the randomized greedy algorithm using heuristic methods to achieve the shallowest possible depth with the minimum number of CNOT gates. This approach not only guarantees a speedup in the execution of quantum cryptographic algorithms but also reduces the impact of quantum noise and hardware constraints on the computation results.
+
+\section{Problem Statement}
+Our research addresses the challenge of finding the optimal (minimum) depth for constructing the matrix components of symmetric ciphers in a quantum computing environment. All matrices are in $\mathbb{F}_{2}$.
+
+Then applied to lightweight block cipher KLEIN \cite{gong2011klein} for build a more efficient MixNibble component to reduce their quantum cost.
+
+\section{Contributions}
+
+\section{Organization}
+Rest of theis orginze as chapter 2 mention preliminaries we used in this work, chapter 3 descire the existing CNOT gate synthesis approach recently, chapter 4 proposed our core idea, chapter 5 we show how to using our approach in real-world quantum circuits, and chapter 5 we would like show you our experimental results, finally chapter 6 and 7 are discussion and conclusion. 

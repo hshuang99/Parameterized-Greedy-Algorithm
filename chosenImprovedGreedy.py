@@ -103,16 +103,17 @@ def chosenImprovedGreedy(mat, matName, greedy, p_value, occur):
     #Verify the Layers is work
     correct = operations.Verify(origin, layers, seq, mat)
     if correct:
-        with open(f"{greedy}_{fileName}-{SIZE}-block_{REVERSED[p_value]}_Layer_Results", "a") as f:
+        with open(f"Results/{greedy}_{fileName}-{SIZE}-block_{REVERSED[p_value]}_Layer_Results", "a") as f:
             for l in layers:
                 for lay in l:
                     f.write("(%d %d %d)|" % (lay[0], lay[1], lay[2]))
                 f.write("\n")
             f.write("CNOT: %d, depth: %d and cost function: %s occurs in %d\n" % (len(seq), len(layers), REVERSED[p_value], occur))
+            f.write("Input-wire Permutation: %s\n" % per)
         f.close()
         
         #store the operations from sequence
-        with open(f"{greedy}_{fileName}-{SIZE}-block_{REVERSED[p_value]}_Sequence_Results", "a") as f:
+        with open(f"Results/{greedy}_{fileName}-{SIZE}-block_{REVERSED[p_value]}_Sequence_Results", "a") as f:
             for i in seq:
                 f.write("%d, %d, %d\n" % (i[0], i[1], i[2]))
             f.write("CNOT: %d\n" % (len(seq)))

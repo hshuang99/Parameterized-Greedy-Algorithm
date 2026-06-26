@@ -11,10 +11,10 @@ def parallelGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op,
     minm_cost = sys.float_info.max; best_row_cst = sys.float_info.max; best_col_cst = sys.float_info.max
     LIMIT = sys.float_info.max
     row_visi = [0]*SIZE; col_visi = [0]*SIZE
-    config = configparser.ConfigParser(); config.optionxform = str; 
-    if "RAND" not in fileName:
-        config.read(Path("Config")/f'ParallelConfig_{fileName}.ini')
-        LIMIT = int(config.get('DEPTH', 'parallelLimit'))
+    #config = configparser.ConfigParser(); config.optionxform = str; 
+    #if "RAND" not in fileName:
+    #    config.read(Path("Config")/f'ParallelConfig_{fileName}.ini')
+    #    LIMIT = int(config.get('DEPTH', 'parallelLimit'))
     close_permu = False
 
     stuck_counter = 0; max_stuck_iterations = 3

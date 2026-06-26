@@ -1,0 +1,281 @@
+\chapter{Our Greedy Algorithm}
+
+
+
+\section{Row-or-Col}
+This strategy evaluates both row and column operations and selects the layer that yields the minimum matrix cost. In cases where the costs are identical, the algorithm defaults to the column-wise operation. 
+
+If only one set of operations is available, the algorithm selects the existing set. 
+
+To address the inherent risk of local minima in greedy heuristics, we implement a stuck threshold. If the cost fails to decrease for three consecutive iterations, the algorithm accepts a sub-optimal operation that increases the cost, thereby enabling an escape from the local minimum.
+
+\begin{algorithm}
+\caption{Row\_or\_Col Greedy}
+\footnotesize
+\begin{algorithmic}[1]
+\Require $mat_{n \times n}$, $inv_{n \times n}$, $L_{r}, L_{c}, Ls_{r}, Ls_{c}, p$ and $flag$
+\Ensure $Ls_{r}, Ls_{c}, row_{op}, col_{op}$ that implement permutation matrix with length $d$
+\State SIZE $\leftarrow$ length(mat)
+\State minm, $best_{row}^{cost}, best_{col}^{cost}$ $\leftarrow$ system.float\_info.max
+\State select\_list $\leftarrow$ list()
+\State $visi_{row}$ $\leftarrow$ [0], $visi_{col}$ $\leftarrow$ [0]
+\State LIMIT $\leftarrow$ LATEST\_MINM\_DEPTH
+\State stuck\_counter $\leftarrow$ 0, max\_stuck\_iterations $\leftarrow$ 3
+\While{$mat$ != Permutation}
+	\State select\_list.clear()
+	\State $L_{row}$.clear(), $L_{col}$.clear(), $L_{row}^{cost}$.clear(), $L_{col}^{cost}$.clear(), $B_{row}$.clear(), $B_{col}$.clear()
+	
+	\If{p != 1}
+		\State $H_r$ $\leftarrow$ costMat($mat$, $p$) + costMat($inv^{T}$, $p$)
+		\State $H_c$ $\leftarrow$ costMat($mat^{T}$, $p$) + costMat($inv$, $p$)
+		\State minm $\leftarrow$ max($H_r$, $H_c$)
+	\Else
+		\State minm $\leftarrow$ costMat($mat$, $p$) + costMat($inv$, $p$)
+    \EndIf
+    
+	\Function{availableRowCollection}{$visi_{row}$, SIZE}
+    	\State \Return $L_{row}$
+	\EndFunction
+	\Function{modifiedAvailableRowOperatorSelection}{$L_{row}$, $L_{row}^{cost}$, $mat$, $inv$, $p$, minm}
+    	\State \Return $B_{row}, best_{row}^{cost}$
+	\EndFunction
+	
+	\Function{availableColCollection}{$visi_{col}$, SIZE}
+    	\State \Return $L_{col}$
+	\EndFunction
+	\Function{modifiedAvailableColOperatorSelection}{$L_{col}$, $L_{col}^{cost}$, $mat$, $inv$, $p$, minm}
+	\State \Return $B_{col}, best_{col}^{cost}$
+	\EndFunction
+	
+	\State is\_stuck = length($B_{row}$) == 0 $\land$ length($B_{col}$) == 0
+	
+	\If{is\_stuck}
+		\State stuck\_counter += 1
+	\Else
+		\State stuck\_counter $\leftarrow$ 0
+    \EndIf
+    
+    \If{(stuck\_counter $\geq$ max\_stuck\_iterations) OR (is\_stuck $\land \sum{visi_{row}}$ == 0 $\land \sum{visi_{col}}$ == 0)}
+		\State escapeCandidates.clear()
+		\Function{avoidLocalMinimaAvailableOperatorSelection}{$L_{row}, L_{col}, mat, inv, p$, escapeCandidates}
+	    	\State \Return select\_list, minm
+		\EndFunction
+    \EndIf
+    
+	\If{$best_{row}^{cost} < best_{col}^{cost}$}
+		\State select\_list $\leftarrow$ $B_{row}$
+		\State minm $\leftarrow$ $best_{row}^{cost}$
+	\ElsIf{$best_{row}^{cost} > best_{col}^{cost}$}
+		\State select\_list $\leftarrow$ $B_{col}$
+		\State minm $\leftarrow$ $best_{col}^{cost}$
+	\Else
+		\State select\_list $\leftarrow$ $B_{col}$ if len($B_{col}) > 0 $ else $B_{row}$
+		\State minm $\leftarrow$ $best_{col}^{cost}$ if len(select\_list) $> 0$ else minm
+    \EndIf
+    
+	\Function{availableOperatorExecution}{select\_list, $L_{r}, L_{c}, Ls_{r}, Ls_{c}$, $mat$, $inv$, $row_{op}, col_{op}$, $visi_{row}, visi_{col}$, $d$, SIZE}
+    	\State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}$, $mat$, $inv$, $row_{op}, col_{op}$, $visi_{row}, visi_{col}$, $d$
+	\EndFunction
+    
+    \If{$d$ > LIMIT}
+	    \State $flag$ = True
+	    \State \Return
+    \EndIf
+\EndWhile
+\State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}, mat, row_{op}, col_{op}, d$, flag
+\end{algorithmic}
+\end{algorithm}
+
+\section{Parallel}
+The Parallel Greedy strategy aggregates both row and column operations into a unified `select\_list`. 
+
+In cases where one operation type is unavailable, the algorithm proceeds with the existing candidates. Similar to the Row-or-Column approach, a stagnation threshold is utilized to escape local minima; if no progress is made for three iterations, the algorithm accepts cost-increasing moves. 
+
+The primary distinction of the Parallel strategy lies in its late-stage optimization: when the matrix approaches a permutation state, the 'one' flag is activated, restricting the search to column-wise operations to finalize the circuit.
+
+\begin{algorithm}
+\caption{Parallel Greedy}
+\footnotesize
+\begin{algorithmic}[1]
+\Require $mat_{n \times n}$, $inv_{n \times n}$, $L_{r}, L_{c}, Ls_{r}, Ls_{c}, p$ and $flag$
+\Ensure $Ls_{r}, Ls_{c}, row_{op}, col_{op}$ that implement permutation matrix with length $d$
+\State SIZE $\leftarrow$ length(mat)
+\State minm, $best_{row}^{cost}, best_{col}^{cost}$ $\leftarrow$ system.float\_info.max
+\State select\_list $\leftarrow$ list()
+\State $visi_{row}$ $\leftarrow$ [0], $visi_{col}$ $\leftarrow$ [0]
+\State LIMIT $\leftarrow$ LATEST\_MINM\_DEPTH
+\State one $\leftarrow$ False
+\State stuck\_counter $\leftarrow$ 0, max\_stuck\_iterations $\leftarrow$ 3
+\While{$mat$ != Permutation}
+	\State select\_list.clear()
+	\State $L_{row}$.clear(), $L_{col}$.clear(), $L_{row}^{cost}$.clear(), $L_{col}^{cost}$.clear(), $B_{row}$.clear(), $B_{col}$.clear()
+	
+	\If{p != 1}
+		\State $H_r$ = costMat($mat$, $p$) + costMat($inv^{T}$, $p$)
+		\State $H_c$ = costMat($mat^{T}$, $p$) + costMat($inv$, $p$)
+		\State minm = max($H_r$, $H_c$)
+	\Else
+		\State minm = costMat($mat$, $p$) + costMat($inv$, $p$)
+    \EndIf
+    
+    \If{!one}
+		\Function{availableRowCollection}{$visi_{row}$, SIZE}
+	    	\State \Return $L_{row}$
+		\EndFunction
+		\Function{modifiedAvailableRowOperatorSelection}{$L_{row}$, $L_{row}^{cost}$, $mat$, $inv$, $p$, minm}
+	    	\State \Return $B_{row}, best_{row}^{cost}$
+		\EndFunction
+    \EndIf
+    
+	\Function{availableColCollection}{$visi_{col}$, SIZE}
+    	\State \Return $L_{col}$
+	\EndFunction
+	\Function{modifiedAvailableColOperatorSelection}{$L_{col}$, $L_{col}^{cost}$, $mat$, $inv$, $p$, minm}
+		\State \Return $B_{col}, best_{col}^{cost}$
+	\EndFunction
+	
+	\State is\_stuck = length($B_{row}$) == 0 $\land$ length($B_{col}$) == 0
+	
+	\If{is\_stuck}
+		\State stuck\_counter += 1
+	\Else
+		\State stuck\_counter $\leftarrow$ 0
+    \EndIf
+    
+    \If{(stuck\_counter $\geq$ max\_stuck\_iterations) OR (is\_stuck $\land \sum{visi_{row}}$ == 0 $\land \sum{visi_{col}}$ == 0)}
+	    \State escapeCandidates.clear()
+		\Function{avoidLocalMinimaAvailableOperatorSelection}{$L_{row}, L_{col}$, mat, inv, p, escapeCandidates}
+	    	\State \Return select\_list, minm
+		\EndFunction
+	\Else
+		\State select\_list $\leftarrow$ $B_{row} + B_{col}$
+		\If{$best_{row}^{cost} < best_{col}^{cost}$}
+			\State minm $\leftarrow$ $best_{row}^{cost}$
+		\ElsIf{$best_{row}^{cost} > best_{col}^{cost}$}
+			\State minm $\leftarrow$ $best_{col}^{cost}$
+		\Else
+			\State minm $\leftarrow$ $best_{col}^{cost}$ if len(select\_list) $> 0$ else minm
+    	\EndIf
+	\EndIf
+    
+	\Function{availableOperatorExecution}{select\_list, $L_{r}, L_{c}, Ls_{r}, Ls_{c}$, $mat$, $inv$, $row_{op}, col_{op}$, $visi_{row}, visi_{col}$, $d$, SIZE, one}
+    	\State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}$, $mat$, $inv$, $row_{op}, col_{op}$, $visi_{row}, visi_{col}$, $d$, one
+	\EndFunction
+    
+    \If{$d$ > LIMIT}
+	    \State $flag$ $\leftarrow$ True
+	    \State \Return
+    \EndIf
+\EndWhile
+\State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}, mat, row_{op}, col_{op}, d$, flag
+\end{algorithmic}
+\end{algorithm}
+
+\section{Original Cost Function}
+
+This cost function is derived from the greedy framework proposed by \cite{schaeffer2014cost}, which utilizes the Hamming distance to close to identity matrix for each row as follows:
+$$h_{origin}(A) = \sum_{i=1}^{n}\sum_{j=1}^{n}(M_{(i,j)} \oplus I_{(i,j)}) + (M_{(i,j)}^{-1} \oplus I_{(i,j)})$$
+
+\section{Proposed Approach}
+\begin{itemize}
+    \item $M$: Given an $n \times n$ input matrix $A$, our greedy algorithm seeks to identify a sequence of operations that transforms $A$ into a permutation matrix.
+    \item $d$: The circuit depth achieved when matrix $A$ is transformed into a permutation matrix.
+    \item $M'$: The matrix cost function is derived from the inverse of matrix $A$.
+    \item SIZE: Since we are specifically considering square block matrices, the matrix size is determined by retrieving the row or column length using the built-in `length()` function.
+    \item $L_{r}, L_{c}$: Row and column operation sequences are stored in separate layer lists for each iteration.
+    \item $Ls_{r}, Ls_{c}$: We maintain row-layer and column-layer lists to store the specific operations assigned to each discrete circuit layer.
+    \item $L_{row}, L_{col}$: A list of remaining operations is updated after each step to exclude those already applied to the matrix.
+    \item $L_{row}^{cost}, L_{col}^{cost}$: For every operation in $L_{row}$ and $L_{col}$, the algorithm calculates and stores the resulting matrix cost function in a lookup list.
+    \item $row_{op}, col_{op}$: The collection of applied row and column operations is stored to construct the final sequence list and to verify the correctness of the transformation.
+    \item $p$: A control parameter is used to select the matrix cost function type. Supported functions include linear sum (1), square (2), cubic (3), quartic (4), and logarithmic (- 1), which can be selected via their respective numerical identifiers.
+    \item over\_depth: An acceptance flag is utilized to evaluate the current circuit depth; it returns 'True' if the depth $d$ exceeds the current minimum depth, and 'False' otherwise.
+    \item close\_permu: A termination flag monitors whether the matrix is nearing a permutation state. If the current matrix can be transformed into a permutation matrix within a single layer, the flag is set to True; otherwise, it remains False.
+    \item minm: The algorithm identifies the current minimum cost across all candidates and selects the operation corresponding to this optimal value.
+    \item origin, inverse: At the start of the process, a copy of the input matrix is retained for final verification. Simultaneously, the matrix inverse is calculated to facilitate the evaluation of the cost function.
+    \item $visi_{row}, visi_{col}$: A visited list tracks the selected row and column indices; once a position is chosen, it is excluded from future iterations to prevent redundant operations.
+    \item select\_list: The selection list stores the set of candidate operations available for the current optimization step.
+    \item $H_{r}, H_{c}$: The matrix cost function is evaluated from both a row perspective and a column perspective to determine the most efficient operation.
+    \item $B_{row}, B_{col}$: The algorithm maintains a collection of row and column operations for both the Row/Column\-wise and Parallel greedy approaches; it identifies the available operators and selects the one with the lowest computational cost.
+    \item $best_{row}^{cost}, best_{col}^{cost}$: The algorithm maintains a collection of cost values for each potential operation in $B_{row}$ and $B_{col}$ to facilitate the selection of the optimal operator.
+    \item stuck\_counter: A counter is used to record the number of consecutive stalls (stuck iterations) to detect when the algorithm has reached a local optimum.
+    \item max\_stuck\_iteration: A stagnation threshold is defined to limit the number of consecutive stalls; by default, this value is set to 3.
+    \item escapeCandidates: The algorithm also maintains a collection of non-optimal operators, representing candidates whose cost values exceeded the current minimum.
+    \item best\_escape: To resolve local minima, the algorithm identifies the optimal candidate from the escapeCandidates list—after sorting it in ascending order—and adds it to the select\_list to resume the search.
+    \item occur\_time: The acceptance counter records the total number of iterations in which an operation was successfully selected and applied.
+    \item minm\_size: A threshold condition is implemented to ensure that the circuit depth (total number of layers) does not exceed the predefined limit.
+    \item reduce: A copy of the initial matrix is retained to verify that the sequence of row and column operations ($row_{op}$ and $col_{op}$) successfully transforms the origin matrix into the target representation.
+    \item size\_minm: The algorithm records the final circuit depth to document the efficiency of the optimized sequence.
+    \item per: The algorithm records the final matrix state to generate a permutation list, which defines the final mapping of the quantum registers.
+    \item seq: The algorithm maintains a comprehensive log of all applied row and column operations ($row_{op}$ and $col_{op}$), which constitutes the final quantum circuit sequence.
+    \item layers: The algorithm maintains a record of the sets $Ls_{c}$ and $Ls_{r}$, which contain the column and row operations assigned to each parallel layer.
+    \item correct: A validation flag is employed to confirm that the combined operation sequence and layer assignments successfully transform the original matrix into a permutation matrix.
+    \item greedy: An algorithmic selection parameter allows the user to specify which greedy strategy (e.g., Row, Column, Row\_or\_Col or Parallel) should be employed during the synthesis process.
+\end{itemize}
+
+The primary algorithm integrating these cost metrics and greedy heuristics is detailed below:
+\begin{algorithm}
+\caption{Chosen Greedy Algorithm}
+\footnotesize
+\begin{algorithmic}[1]
+\Require $mat$, matName, greedy, $p$, occur\_time
+\Ensure $d$, $Layers$
+\State minm, minm\_size $\leftarrow$ system.float\_info.max
+\State SIZE $\leftarrow$ len($mat$)
+\State $origin$.copy($mat$)
+\State $inv$ $\leftarrow$ inverse($mat$)
+\State $L_{r}, L_{c}, Ls_{r}, Ls_{c}, row_{op}, col_{op}$ $\leftarrow$ list()
+\State $flag \leftarrow False$
+
+\Function{ModifiedRandomizedGreedy}{greedy, p}
+	\State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}, mat, row_{op}, col_{op}, depth, flag$
+\EndFunction
+
+\If{$flag$}
+	\State \Return
+\EndIf
+
+\Function{LastCheck}{$L_{r}, L_{c}, Ls_{r}, Ls_{c}$}
+	\State \Return $Ls_{r}, Ls_{c}$
+\EndFunction
+
+\State $reduce$.copy($origin$)
+\State size $\leftarrow$ 0
+\Function{GenerateReduceMatrix}{$reduce$, $row_{op}, col_{op}$, size}
+	\State \Return reduce, size
+\EndFunction
+
+\State $ok \leftarrow True$
+\If{$reduce$ != $mat$}
+	\State $ok = False$
+\EndIf
+
+\If{($d > minm$) OR ($d == minm \land size \geq minm\_size$) OR $!ok$}
+	\State \Return
+\EndIf
+
+\State $minm \leftarrow d$
+\State size\_minm $\leftarrow$ size
+
+\State $per$ $\leftarrow$ list()
+\Function{GeneratePermutationList}{SIZE, $mat, per$}
+	\State \Return $per$
+\EndFunction
+
+\State seq $\leftarrow$ list()
+\Function{GenerateSequenceList}{seq, $row_{op}, col_{op}$}
+	\State \Return seq
+\EndFunction
+
+\State layers $\leftarrow$ list()
+\Function{GenerateLayersList}{layers, $Ls_{r}, Ls_{c}$}
+	\State \Return layers
+\EndFunction
+
+\State correct $\leftarrow$ Verify($origin$, layers, seq, $mat$)
+\If{!correct}
+	\State \Return
+\EndIf
+\State \Return $d$, layers
+\end{algorithmic}
+\end{algorithm}
+

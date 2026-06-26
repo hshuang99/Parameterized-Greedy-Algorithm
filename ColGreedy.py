@@ -12,10 +12,10 @@ def colGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op, p_va
     LIMIT = sys.float_info.max
     row_visi = [0]*SIZE; col_visi = [0]*SIZE
     close_permu = False
-    config = configparser.ConfigParser(); config.optionxform = str;
-    if "RAND" not in fileName:
-        config.read(Path("Config")/f'ColConfig_{fileName}.ini')
-        LIMIT = int(config.get('DEPTH', 'colLimit'))
+    #config = configparser.ConfigParser(); config.optionxform = str;
+    #if "RAND" not in fileName:
+    #    config.read(Path("Config")/f'ColConfig_{fileName}.ini')
+    #    LIMIT = int(config.get('DEPTH', 'colLimit'))
 
     while not operations.is_permutation_matrix(mat):
         print("\n=== Starting new iteration ===")
