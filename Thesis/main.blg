@@ -1,15 +1,15 @@
 [0] Config.pm:307> INFO - This is Biber 2.19
 [0] Config.pm:310> INFO - Logfile is 'main.blg'
-[60] biber:340> INFO - === Fri Jun 26, 2026, 13:36:21
-[74] Biber.pm:419> INFO - Reading 'main.bcf'
-[121] Biber.pm:979> INFO - Found 6 citekeys in bib section 0
-[132] Biber.pm:4419> INFO - Processing section 0
-[139] Biber.pm:4610> INFO - Looking for bibtex file 'back/references.bib' for section 0
-[140] bibtex.pm:1713> INFO - LaTeX decoding ...
-[145] bibtex.pm:1519> INFO - Found BibTeX data source 'back/references.bib'
-[217] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[217] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[217] Biber.pm:4239> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
-[217] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
-[227] bbl.pm:660> INFO - Writing 'main.bbl' with encoding 'UTF-8'
-[230] bbl.pm:763> INFO - Output to main.bbl
+[67] biber:340> INFO - === Fri Jun 26, 2026, 15:39:01
+[79] Biber.pm:419> INFO - Reading 'main.bcf'
+[118] Biber.pm:979> INFO - Found 5 citekeys in bib section 0
+[126] Biber.pm:4419> INFO - Processing section 0
+[136] Biber.pm:4610> INFO - Looking for bibtex file 'back/references.bib' for section 0
+[137] bibtex.pm:1713> INFO - LaTeX decoding ...
+[143] bibtex.pm:1519> INFO - Found BibTeX data source 'back/references.bib'
+[202] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[203] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[203] Biber.pm:4239> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[203] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[213] bbl.pm:660> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[215] bbl.pm:763> INFO - Output to main.bbl

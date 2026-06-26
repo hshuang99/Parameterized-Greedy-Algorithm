@@ -214,7 +214,7 @@ $$h_{origin}(A) = \sum_{i=1}^{n}\sum_{j=1}^{n}(M_{(i,j)} \oplus I_{(i,j)}) + (M_
 
 The primary algorithm integrating these cost metrics and greedy heuristics is detailed below:
 \begin{algorithm}
-\caption{Chosen Greedy Algorithm}
+\caption{Parameterized Greedy Algorithm}
 \footnotesize
 \begin{algorithmic}[1]
 \Require $mat$, matName, greedy, $p$, occur\_time
@@ -226,7 +226,7 @@ The primary algorithm integrating these cost metrics and greedy heuristics is de
 \State $L_{r}, L_{c}, Ls_{r}, Ls_{c}, row_{op}, col_{op}$ $\leftarrow$ list()
 \State $flag \leftarrow False$
 
-\Function{ModifiedRandomizedGreedy}{greedy, p}
+\Function{ParameterizedGreedy}{greedy, p}
 	\State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}, mat, row_{op}, col_{op}, depth, flag$
 \EndFunction
 

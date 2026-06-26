@@ -17,6 +17,11 @@
 % \usepackage{showframe} % for viewing margins 
 \usepackage{times}
 
+\usepackage{braket}
+\usepackage{tikz}
+\usepackage{circuitikz}
+\usetikzlibrary{circuits.logic.US, positioning}
+
 
 % Allow 10pt/11pt/12pt font size options
 \DeclareOption{10pt}{\def\@ptsize{0}}

@@ -1,20 +1,21 @@
 \chapter{Introduction}
 
 \section{Motivation}
-Quantum Computation bring some new direction for traditioanl complicated tasks that too difficult to simulate on a classical(current) computer, such as 
+As growing of quantum computer that their computation ability can hazard the current(classical) crypto-system. Such as Shor's algorithm can break the factoring problem, and Grover's Search algorithm can reduce length of security-bit of the symmetric cryptography.
 
-Quantum cryptography, as the name suggests, utilizes the cryptographic mechanisms underlying quantum circuits. To improve efficiency, it is essential to find more optimized implementations for these circuits. But in quantum computing, many applications rely heavily on linear reversible circuits; therefore, deploying efficient methods to reduce their computational cost is key to providing more practical algorithms.
+On the other hand, quantum computer can bring new direction for design cryptography and cryptanalysis, we can think physically about computation, this is core spirit in quantum computaiton and quantum information. Speciﬁc in quantum cryptography, as the name suggests, it utilizes the cryptographic mechanisms underlying quantum circuits. The beneﬁts that using quantum mechanism is it provided quantum secrecy by uncertainty principle.
 
-Currently, most crypto-systems are constructed using a significant number of CNOT gates in quantum circuit. Drawing inspiration from the field of Very Large Scale Integration (VLSI), we aim to reduce quantum algorithm costs by focusing on circuit depth as our primary metric, targeting linear scaling.
+To improve eﬃciency for quantum circuits, it is essential to ﬁnd more compact implementation for construction. In quantum computing, many application heavily rely on linear reversible circuits; Therefore, deploying eﬃcient methods to reduce the computational cost is key opint to providing more practical algorithms.
 
-In this work, we propose an enhancement to the randomized greedy algorithm using heuristic methods to achieve the shallowest possible depth with the minimum number of CNOT gates. This approach not only guarantees a speedup in the execution of quantum cryptographic algorithms but also reduces the impact of quantum noise and hardware constraints on the computation results.
+Currently, most symmetric cryptosystem are constructed by siginiﬁcant number of CNOT gates. Drawing inspiration from the ﬁeld of Very Large Scale Integration (VLSI), we aim to reduce quantum algorithm costs by focusing on circuit depth as our primary metric, targeting linear scaling.
+
+In this work, we proposed an enhancement randomized greedy algorithm using heuristic methods to achieve the shallowest possible depth with minimum number of CNOT gates. our approach not only guarantees a speedup in the execution of quantum cryptographic algorithms but also reduces the impact of quantum noise and hardware constraints on the computation results.
 
 \section{Problem Statement}
-Our research addresses the challenge of finding the optimal (minimum) depth for constructing the matrix components of symmetric ciphers in a quantum computing environment. All matrices are in $\mathbb{F}_{2}$.
-
-Then applied to lightweight block cipher KLEIN \cite{gong2011klein} for build a more efficient MixNibble component to reduce their quantum cost.
+In this study we addresses the challenge of ﬁnding the optimal(shallowest) depth for consturcting the matrix components of symmetric chipers in gate-based quantum circuit. All matrices are in $\mathbb{F}_{2}$. Subsequentially verify our results can work for real-world block cipher scheme.
 
 \section{Contributions}
+Our research focuses on optimizing quantum circits of block cipher, for instance, those component can bring diﬀusion and confusion property for symmetric cryptography, and then we survry latest quantum circuit implement of lightweight crypto-system, our improved AES MixColumn (Rijndael) signiﬁcantly reduce the amounts of CNOT gate for KLEIN family.
 
 \section{Organization}
-Rest of theis orginze as chapter 2 mention preliminaries we used in this work, chapter 3 descire the existing CNOT gate synthesis approach recently, chapter 4 proposed our core idea, chapter 5 we show how to using our approach in real-world quantum circuits, and chapter 5 we would like show you our experimental results, finally chapter 6 and 7 are discussion and conclusion. 
+Rest of this paper are Section 2 we explan all used elements. Section 3 we describe the existing approach for optiaml quantum circuit that we considered. Our proposed greedy algorithm are illustrated in Section 4. In Section 5, we will introdcution lightweight scheme KLEIN family and prove our optimized circuit can work on it. After all of method we mentioned, we would like show all of experimental results in Section 6. Fianlly, Section 7 and 8 are discussion and conclusion for this work.

@@ -2361,17 +2361,16 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">back/references.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1" intorder="1">gong2011klein</bcf:citekey>
-    <bcf:citekey order="2" intorder="1">cryptoeprint:2024/381</bcf:citekey>
+    <bcf:citekey order="1" intorder="1">cryptoeprint:2024/381</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">9475957</bcf:citekey>
     <bcf:citekey order="3" intorder="1">9475957</bcf:citekey>
-    <bcf:citekey order="4" intorder="1">9475957</bcf:citekey>
-    <bcf:citekey order="5" intorder="1">cryptoeprint:2024/381</bcf:citekey>
-    <bcf:citekey order="6" intorder="1">schaeffer2014cost</bcf:citekey>
-    <bcf:citekey order="7" intorder="1">9475957</bcf:citekey>
-    <bcf:citekey order="8" intorder="1">cryptoeprint:2024/381</bcf:citekey>
-    <bcf:citekey order="9" intorder="1">cryptoeprint:2017/368</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">cryptoeprint:2024/381</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">schaeffer2014cost</bcf:citekey>
+    <bcf:citekey order="6" intorder="1">9475957</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">cryptoeprint:2024/381</bcf:citekey>
+    <bcf:citekey order="8" intorder="1">cryptoeprint:2017/368</bcf:citekey>
+    <bcf:citekey order="9" intorder="1">cryptoeprint:2015/258</bcf:citekey>
     <bcf:citekey order="10" intorder="1">cryptoeprint:2015/258</bcf:citekey>
-    <bcf:citekey order="11" intorder="1">cryptoeprint:2015/258</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

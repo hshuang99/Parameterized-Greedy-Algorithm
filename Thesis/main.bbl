@@ -68,43 +68,6 @@
       \endverb
       \keyw{Qubit;Logic gates;Upper bound;Quantum computing;Hardware;Approximation algorithms;Quantum circuit;Linear reversible circuits;quantum computation;reversible logic}
     \endentry
-    \entry{gong2011klein}{inproceedings}{}
-      \name{author}{3}{}{%
-        {{hash=53522ae5afc213bce5e8558120e6ed3f}{%
-           family={Gong},
-           familyi={G\bibinitperiod},
-           given={Zheng},
-           giveni={Z\bibinitperiod}}}%
-        {{hash=c32e5163ebde0e17ace3e6cf9bc14a72}{%
-           family={Nikova},
-           familyi={N\bibinitperiod},
-           given={Svetla},
-           giveni={S\bibinitperiod}}}%
-        {{hash=2bd1bacbefac18b431791efad2c04296}{%
-           family={Law},
-           familyi={L\bibinitperiod},
-           given={Yee\bibnamedelima Wei},
-           giveni={Y\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
-      }
-      \list{organization}{1}{%
-        {Springer}%
-      }
-      \strng{namehash}{21f998ecb812674f59170b9171f4212b}
-      \strng{fullhash}{21f998ecb812674f59170b9171f4212b}
-      \strng{bibnamehash}{21f998ecb812674f59170b9171f4212b}
-      \strng{authorbibnamehash}{21f998ecb812674f59170b9171f4212b}
-      \strng{authornamehash}{21f998ecb812674f59170b9171f4212b}
-      \strng{authorfullhash}{21f998ecb812674f59170b9171f4212b}
-      \field{sortinit}{G}
-      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{booktitle}{International workshop on radio frequency identification: security and privacy issues}
-      \field{title}{KLEIN: a new family of lightweight block ciphers}
-      \field{year}{2011}
-      \field{pages}{1\bibrangedash 18}
-      \range{pages}{18}
-    \endentry
     \entry{cryptoeprint:2017/368}{misc}{}
       \name{author}{2}{}{%
         {{hash=cc4c5be1632372aab6f71a3b8d4a3931}{%

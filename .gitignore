@@ -209,3 +209,22 @@ Temporary Items
 *_Results*
 *_result
 rand_*
+
+# LaTex compiled files
+.pdf
+.dvi
+.ps
+.aux
+.log
+.toc
+.bbl
+.bbl*
+.blg
+.bcf
+.synctex.gz
+.ist
+.lof
+.lot
+.nlo
+.out
+.run.xml

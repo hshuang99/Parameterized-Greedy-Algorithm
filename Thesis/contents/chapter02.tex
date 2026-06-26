@@ -4,10 +4,15 @@
 \section{Notations}
 In this section we would like show some notations used in this theis are listed as follows:
 
-\begin{tabular}{ c | c  }
+\begin{tabular}{ c | l  }
     \hline
 Notation & Definition\\
 \hline
+$\ket{0}, \ket{1}$ & \\
+$\alpha, \beta$ & The probabilies for $\ket{0}$ and $\ket{1}$\\
+$\ket{\psi}$ & The quantum bit or qubit for short, it is used for describe linear combinations for states.\\
+$\dagger$ & The operation that transpose and then complex conjugating
+the pauli matrix gate.\\
 $\mathbb{F}_{2}$ & The finite field with two elements 0 and 1 \\
 $\oplus$ & The XOR computation in logic representation\\
 $E(i + j)$ & 
@@ -15,3 +20,50 @@ $E(i + j)$ &
 
 
 \section{Quantum Circuits}
+From the Enigma machine to von Neumann classical computer they all consists with wires and logic gates to execute the operations. Similary, quantum computer also need construct by those components but it is combine quantum wires and quantum logic gates to generate quantum circuits which used for transfer the quantum bits and execution the algorithm.
+
+This is the ﬂesh and blood for quantum computer, and using these elemtns to handle the superposition state throguh Dirac notation:
+
+\begin{equation}
+    \ket{\psi} = \alpha\ket{0} + \beta\ket{1}
+\end{equation}
+
+In this section, we will introduce some fundamental elements for quantum circuits, including NOT, CNOT and Toﬀoli gates. Those gates can understand from matrix operation, and the circuits only generate by these gates we called them NCT-based circuit.
+
+First of all, NOT gate or in pauli matrix view we called it X gate in general, whose operation can deﬁned by its truth table, it can make the input bit $0 \rightarrow 1$ and $1 \rightarrow 0$ in classical perspective, but if we switch it to quantum perspective, we can took it as $\ket{0}$ and $\ket{1}$, and it can be acts linearly for $\ket{\psi}$. Through the matrix X the state will change,
+
+\begin{figure}[h]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering
+\[
+X \equiv \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+\]
+\end{minipage}%
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering
+\begin{tikzpicture}
+  % input wire
+  \draw (0,0) -- (1,0);
+  % NOT gate body (triangle)
+  \draw (1,0.4) -- (1,-0.4) -- (2,0) -- cycle;
+  % bubble (inversion circle)
+  \draw (2.15,0) circle (0.15);
+  % output wire
+  \draw (2.3,0) -- (3.3,0);
+  % labels
+  \node[left] at (0,0) {$x$};
+  \node[right] at (3.3,0) {$\bar{x}$};
+\end{tikzpicture}
+\end{minipage}
+\end{figure}
+
+we think about it as column view
+
+\section{Optimization Target}
+In this work, our goal is reduce depth of quantum circuits as metric, which is inﬂuence the time cost and storage cost for quantum algorithm. After observation, CNOT gate is most used in gate-based quantum computer currently.
+
+And shallow depth of quantum circuits can also make amounts decrease, which can reduce the noise that against quantum decoherence.
+
+\section{Grover's Search Algorithm}
