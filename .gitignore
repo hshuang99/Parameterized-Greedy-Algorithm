@@ -200,6 +200,9 @@ Temporary Items
 
 # swapping file
 .swp
+.*.swp
+.swo
+.*.swo
 
 # results file
 *_Results
