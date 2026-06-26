@@ -4,9 +4,9 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Quantum Circuit of AES MixColumns for depth 10}}{18}{figure.caption.8}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Our appaorach for depth 9}}{19}{figure.caption.9}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Quantum Circuit of AES MixColumns for depth 10}}{23}{figure.caption.10}%
+\contentsline {figure}{\numberline {A.2}{\ignorespaces Our appaorach for depth 9}}{24}{figure.caption.11}%
 \addvspace {10\p@ }

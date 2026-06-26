@@ -29,13 +29,13 @@
 \contentsline {chapter}{\numberline {5}Experimental Results}{14}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Depth}{14}{section.5.1}%
 \contentsline {section}{\numberline {5.2}Quantum Circuits}{14}{section.5.2}%
-\contentsline {chapter}{\numberline {6}Discussion}{20}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Conclusion}{21}{chapter.7}%
-\contentsline {chapter}{References}{22}{chapter*.10}%
+\contentsline {chapter}{\numberline {6}Discussion}{18}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Conclusion}{19}{chapter.7}%
+\contentsline {chapter}{References}{20}{chapter*.8}%
 \contentsline {chapter}{Appendices}{}{}
-\contentsline {chapter}{\numberline {A}Codes}{24}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Content Elements}{24}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Writing Tips}{24}{section.A.2}%
+\contentsline {chapter}{\numberline {A}Quantum Circuits}{22}{appendix.A}%
+\contentsline {section}{\numberline {A.1}MixColumns}{22}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Writing Tips}{22}{section.A.2}%
 \contentsline {chapter}{\numberline {B}Parameters}{25}{appendix.B}%
 \contentsline {section}{\numberline {B.1}No. 0001~0050}{25}{section.B.1}%
 \contentsline {section}{\numberline {B.2}No. 0051~0100}{25}{section.B.2}%

@@ -10,15 +10,11 @@ In this project, we implement an approach that reduces the depth of quantum circ
 .
 ├── Matrix/
 ├── main.py
-    ├── modifiedImprovedGreedy.py
+    ├── parameterizedGreedy.py
         ├── RowGreedy.py
-            ├── RowConfig.ini
         ├── ColGreedy.py
-            ├── ColConfig.ini
         ├── row_or_Col_Greedy.py
-            ├── row_or_Col_Config.ini
         ├── ParallelGreedy.py
-            ├── ParallelConfig.ini
     ├── cost_function.py
     ├── operations.py
     ├── selector.py
