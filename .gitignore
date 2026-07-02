@@ -228,3 +228,4 @@ rand_*
 *.nlo
 *.out
 *.run.xml
+*.glo
