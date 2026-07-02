@@ -1,5 +1,6 @@
-\documentclass{nthu_thesis}
+\documentclass[]{nthu_thesis}
 
+% set proper margins
 \geometry{
   a4paper,
   left=3cm,
@@ -16,9 +17,9 @@
 \setlength{\marginparwidth}{0pt}
 \setlength{\marginparsep}{0pt}
 
+
 \begin{document}
 \pagestyle{plain} %This is the default style for most document classes. It places the page number centered in the footer, with an empty header.
-\begin{CJK}{UTF8}{bkai}
 
 %%% Necessary fields for this thesis data %%%
 % Add your custom class definitions here if any
@@ -39,81 +40,91 @@
 \newcommand{\yearEN}{2026} % Graduation (oral exam) Year  
 \newcommand{\monthEN}{July} % Graduation (oral Exam) month
 
-\input{2025Titlepage}
 
+\input{2025Titlepage}
 %intentionally to add a blank page 
 \newpage
 \null
 \thispagestyle{empty}
 \newpage
 
+% 書名頁
 \input{2025Titlepage}
  \let\cleardoublepage=\clearpage % Place this after \end{titlepage} for removing the blank page 
  
 %\restoregeometry  %back to NTHU required geometry setting
 
+% \cftaddtitleline{toc}{chapter}{學位論文授權書}{}
 
+% \includepdf[pages=1-3, fitpaper=true,
+       % keepaspectratio, pagecommand={{\thispagestyle{empty}}},offset=-0.0cm 0.0cm]{./front/Authorized agreement.pdf} %offset=+right +up
+       
 % \includepdf[pages=1, angle=0, fitpaper=true,
-%     keepaspectratio, pagecommand={{\thispagestyle{empty}}}]{./front/Advisor Approval Form.pdf}
+%     keepaspectratio, pagecommand={{\thispagestyle{empty}}},offset=-0.0cm 0.0cm]{./front/Advisor Approval Form.pdf}
 
 %\cftaddtitleline{<ext>}{<kind>}{<text>}{<page>} intead of using \addcontentsline command  for without page numbering
 
+
+
+       
 % \cftaddtitleline{toc}{chapter}{指導教授推薦書}{}
 
 % \includepdf[pages=1, angle=0, fitpaper=true,
-%        keepaspectratio, pagecommand={{\thispagestyle{empty}}},offset=-0.0cm 0.0cm]{./front/Thesis Review Form.pdf} % offset=+right +up
+       % keepaspectratio, pagecommand={{\thispagestyle{empty}}},offset=-0.0cm 0.0cm]{./front/Thesis Review Form.pdf} %offset=+right +up
 
 % \cftaddtitleline{toc}{chapter}{考試委員審定書}{}
 
 \frontmatter %Use for book class 
 
-%\pagenumbering{roman} %set lowercase Roman numerals for page numbers if set report class
-
 %%% Necessary 中文摘要%%%
 \chapter*{摘要}
 \addcontentsline{toc}{chapter}{摘要}
-\input{front/C_Abstract}    % 插入中文摘要於此 Insert Chinese Abstract
-
+\input{front/C_Abstract}       % 插入中文摘要於此 Insert Chinese Abstract
+%\setcounter{page}{1}  %set page begins with i
 \clearpage
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-\input{front/Eng_Abstract}     % Insert English Abstract
-\setcounter{page}{1}  %set page begins with i
+\input{front/Eng_Abstract}       % 插入英文摘要於此 Insert English Abstract
 \clearpage
 
 
-
-\chapter*{致謝}
-\addcontentsline{toc}{chapter}{致謝}
-\input{front/acknowledgement}      % Acknowledgement
+%\pagenumbering{roman} %set lowercase Roman numerals for page numbers if set article class
+\chapter*{Acknowledgement}
+\addcontentsline{toc}{chapter}{Acknowledgement}
+\input{front/acknowledgement}       % 致謝（Acknowledgement）
 \clearpage
 
+% 生成目錄與符號列表
 % generate Contents of Tables, lists of figures, tables, 
-
+\renewcommand*\contentsname{Table of Contents}
+\pagestyle{plain}
 \tableofcontents
 \addcontentsline{toc}{chapter}{Table of Contents}
 \clearpage
 
+\renewcommand*\listfigurename{List of Figures}
 \listoffigures  % Insert list of figures
 \addcontentsline{toc}{chapter}{List of Figures}
 \clearpage
 
+\renewcommand*\listtablename{List of Tables}
 \listoftables  % Insert list of tables
 \addcontentsline{toc}{chapter}{List of Tables}
 \clearpage
 
-%Nomenclature (optional). List unfamiliar terms, symbols, acronyms and their meanings.
-\input{front/Nomenclature}    % if needed Nomenclature
+% Nomenclature (optional). List unfamiliar terms, symbols, acronyms and their meanings. Delete if not needed
+\input{front/Nomenclature}    % if needed 符號列表（Nomenclature）
 \addcontentsline{toc}{chapter}{Nomenclature}
 \clearpage
 
-% Contents of Thesis
+
+% 論文內容Contents of Thesis
 
 \mainmatter  %for book class only
 %\pagenumbering{arabic} % already default for book class, Arabic/Indic page numbers, needed for article class
 
-\pagestyle{plain} %This is the default style for most document classes. It places the page number centered in the footer, with an empty header.
+\pagestyle{plain} % This is the default style for most document classes. It places the page number centered in the footer, with an empty header.
 \input{contents/chapter01}
 \input{contents/chapter02}
 \input{contents/chapter03}
@@ -126,14 +137,14 @@
 % 參考文獻  References
 
 \cleardoublepage
-\printbibliography[
-heading=bibintoc,
-title={References}
-]
+\printbibliography[ heading=bibintoc,title={Bibliography} ]
 
+%\addcontentsline{toc}{chapter}{參考文獻}
+% \addcontentsline{toc}{chapter}{Bibliography}
 
+% 附錄 如果沒有附錄，可以刪除這整段
 % Appendices  if no appendix, this section can be deleted
- 
+\renewcommand*\appendixname{Appendix}
 \appendix   % Signal the start of the appendix section
 
 \chapter*{\centering{Appendices}}
@@ -142,5 +153,5 @@ title={References}
 \input{back/appendix01}
 \input{back/appendix02}
 
-\end{CJK}
 \end{document}
+
