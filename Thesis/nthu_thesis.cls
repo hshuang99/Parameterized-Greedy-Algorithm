@@ -18,6 +18,7 @@
 \usepackage{tikz} 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{array}
 
 
 

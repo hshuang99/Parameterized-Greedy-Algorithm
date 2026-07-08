@@ -10,7 +10,7 @@ If only one set of operations is available, the algorithm selects the existing s
 To address the inherent risk of local minima in greedy heuristics, we implement a stuck threshold. If the cost fails to decrease for three consecutive iterations, the algorithm accepts a sub-optimal operation that increases the cost, thereby enabling an escape from the local minimum.
 
 \begin{algorithm}
-\caption{Row\_or\_Col Greedy}
+\caption{Row-or-Col Greedy}
 \footnotesize
 \begin{algorithmic}[1]
 \Require $mat_{n \times n}$, $inv_{n \times n}$, $L_{r}, L_{c}, Ls_{r}, Ls_{c}, p$ and $flag$
@@ -55,7 +55,7 @@ To address the inherent risk of local minima in greedy heuristics, we implement 
 		\State stuck\_counter $\leftarrow$ 0
     \EndIf
     
-    \If{(stuck\_counter $\geq$ max\_stuck\_iterations) OR (is\_stuck $\land \sum{visi_{row}}$ == 0 $\land \sum{visi_{col}}$ == 0)}
+    \If{(stuck\_counter $\geq$ max\_stuck) OR (is\_stuck $\land \sum{visi_{row}}$ == 0 $\land \sum{visi_{col}}$ == 0)}
 		\State escapeCandidates.clear()
 		\Function{avoidLocalMinimaAvailableOperatorSelection}{$L_{row}, L_{col}, mat, inv, p$, escapeCandidates}
 	    	\State \Return select\_list, minm

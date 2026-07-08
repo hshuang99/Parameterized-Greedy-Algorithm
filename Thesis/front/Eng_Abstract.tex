@@ -1,22 +1,4 @@
-	The abstract is a concise summary of the dissertation, encapsulating its core content in a clear, logically coherent manner to engage readers. It should be limited to one page, approximately 300–500 words, and avoid including figures or tables.
-    
-\textbf{Content Elements:}
-\begin{itemize}
-    \item Research Motivation and Objectives: Describe the background, core research question, and primary goals.
-    \item Research Scope: Clearly define the topics and boundaries of the study.
-    \item Methodology: Summarize the methods, techniques, or tools used and briefly justify their selection.
-    \item Key Results: Highlight the most significant findings or data.
-    \item Comparison and Significance: Compare results with the initial objectives and existing literature, emphasizing contributions.
-    \item Impact and Future Directions: Discuss the study’s benefits to academic or practical fields and suggest future research or applications.
-\end{itemize}
-
-
-\textbf{Writing Tips:}
-\begin{itemize}
-    \item Use precise, accessible language to ensure clarity for non-experts.
-    \item Draft the abstract after completing other sections to ensure it fully reflects the dissertation’s content.
-    \item Format in plain text (no HTML or special formatting) to comply with library archiving and online search requirements.
-\end{itemize}
+With rapid advances in quantum computing, many major technology companies have recently launched quantum computing cloud platforms, while smaller technology startups and research teams have released quantum simulation libraries for noisy intermediate-scale quantum (NISQ) devices. Notably, most quantum machines rely on gate-based architectures, in which quantum circuits form the backbone of these platforms. All quantum algorithms, ranging from quantum machine learning to cryptographic attack algorithms, must ultimately be executed as circuits. Because quantum computing suffers from decoherence, which degrades the integrity of information stored on quantum hardware, employing more quantum logic gates increases circuit depth and correspondingly reduces accuracy. Consequently, minimizing circuit depth remains a critical metric for improving algorithmic performance on this class of architecture. On the other hand, reducing gate count is another important objective, though depth and gate-count reduction often trade off in optimization. In this work, we optimize the quantum circuits of block ciphers based on Shi and Feng's greedy algorithm. Our approach bidirectionally explores all possible shallow-depth CNOT circuits to synthesize the linear reversible components used in quantum algorithms. We obtain a CNOT circuit for the AES MixColumns transformation with depth 9, outperforming previous greedy algorithms, and demonstrate that our method generalizes to other block ciphers. In addition, our algorithm is effective on a range of MDS matrices, synthesizing low-depth circuits for each. Furthermore, we refine several components of prior depth-oriented greedy algorithm research, achieving improved performance. Finally, we demonstrate the practical applicability of our approach to the KLEIN family, a lightweight block cipher that has recently attracted growing attention, by using our method to synthesize a resource-efficient, in-place MixNibbles component that satisfies the required diffusion property.
 
 \medskip
-\textbf{Keywords:} database, HTML, library archiving, dissertation, methodology
+\textbf{Keywords:} Quantum circuit, Quantum depth, Greedy algorithm, Block cipher, AES MixColumns, KLEIN, Grover's search algorithm
