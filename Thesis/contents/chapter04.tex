@@ -1,6 +1,9 @@
-\chapter{Our Greedy Algorithm}
+\chapter{Our Greedy Algorithms}
+In this section we introduce our methods using for synthsizing low-depth CNOT circuit for block ciphers. Our approaches based on Shi and Feng's greedy method specific in block size of 16$\times$16 and 32$\times$32 that has been discussed in \cite{cryptoeprint:2023/165}.
 
+We proposed an improved depth-oriented algorithm for synthesizing ancilla-free, low-depth CNOT circuits, we developed four distinct greedy strategies to further explore depth-optimized results.
 
+By utilizing different matrix representations and heuristics search, we implemented Row-or-Column and Parallel algorithms. The pseudocode and implementation logic for each approach are detailed in the following sections.
 
 \section{Row-or-Col}
 This strategy evaluates both row and column operations and selects the layer that yields the minimum matrix cost. In cases where the costs are identical, the algorithm defaults to the column-wise operation. 

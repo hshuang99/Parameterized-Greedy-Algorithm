@@ -19,6 +19,12 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{array}
+\usepackage{quantikz}
+\usepackage{circuitikz}
+\usepackage{tabularx}
+% Define a new centered column type with identical distributed widths
+\newcolumntype{C}{>{\centering\arraybackslash}X} 
+
 
 
 
