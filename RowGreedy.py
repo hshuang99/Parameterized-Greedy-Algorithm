@@ -41,6 +41,9 @@ def rowGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op, p_va
 
         select_list, L_r, L_c, Ls_r, Ls_c,  mat, inverse, row_op, col_op, row_visi, col_visi, depth, close_permu = operations.available_operator_execution(select_list, L_r, L_c, Ls_r, Ls_c, mat, inverse, row_op, col_op, row_visi, col_visi, depth, SIZE, close_permu)
 
+        if close_permu:
+            p_value = "-1"
+
         if depth > LIMIT: #the depth is over latest minimum depth
             print(f"Depth {depth} over minimum limit {LIMIT}, so break this iteration")
             over_depth = True

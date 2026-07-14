@@ -1,6 +1,30 @@
 \chapter{Existing Approach for CNOT Gate Composition}
+\label{ch:existing-approaches}
 
 In this section, we review existing methods for CNOT circuit synthesis that aim to optimize circuit depth.
+
+\section{CNOT Circuits and Elementary Matrix Operations}\label{sec:CNOT-transformation-to-Matrix-Operations}
+Before reviewing existing synthesis methods, we first establish the mathematical correspondence between CNOT circuits and matrix operations over $\mathbb{F}_{2}$, which underlies all of the approaches discussed in this section.
+
+A CNOT circuit is a quantum circuit composed entirely of CNOT gates. Since each CNOT gate performs a linear, reversible operation on two qubits, the action of an $n$qubit CNOT circuit as a whole can be represented by an invertible $n \times n$ Boolean matrix $A \in GL(n, \mathbb{F}_{2})$. Specifically, a CNOT gate controlled by qubit $i$ and targeting qubit $j$ j corresponds to a type-3 elementary matrix $E(i+j)$, obtained by adding the $i$-th row to the $j$-th row of the identity matrix $I_{n}$. . Applying this gate to a circuit is therefore equivalent to left-multiplying the operator matrix by $E(i+j)$, i.e., performing the elementary row operation $r_{j} \leftarrow r_{i} \oplus r_{j}$.
+
+In addition to type-3 matrices, we also make use of type-1 elementary matrices $E(i \leftrightarrow j)$, obtained by exchanging the $i$-th and $j$-th rows of $I_{n}$. These correspond to a permutation of two qubits, which can be implemented at zero gate cost via simple rewiring rather than an actual quantum gate.
+
+The foundational result connecting these operations to circuit synthesis is the following decomposition theorem:
+
+
+\begin{theorem}
+Any invertible matrix \(A \in GL(n, \mathbb{F}_{2})\) can be expressed as a product of type-1 and type-3 elementary matrices:
+	\begin{equation}
+		\label{eq:elementary-matrix-operation-type-1-and-3}
+		A = P \cdot E(i_{1} + j_{1})E(i_{2} + j_{2}) \cdots E(i_{L} + j_{L})
+	\end{equation}
+,where \(P\) is a permutation matrix.
+\end{theorem}
+
+Since qubit permutations are cost-free under full qubit connectivity, this decomposition directly yields a CNOT circuit implementing $A$: each type-3 factor $E(i_{k} + j_{k})$ corresponds to one CNOT gate, and the total number of factors $L$ determines the CNOT count of the resulting circuit. Crucially, if two elementary operations act on disjoint pairs of qubits, the corresponding CNOT gates can be executed in parallel, meaning the depth of the synthesized circuit depends not on $L$ alone, but on how these operations can be grouped into parallel layers.
+
+This equivalence reframes the problem of CNOT circuit synthesis as a purely linear-algebraic one: transforming an invertible matrix  $A$ into the identity matrix (or a permutation matrix) using the fewest possible sequential layers of row and column operations. All of the synthesis methods reviewed below—Gaussian elimination, DaCSynth, and greedy cost-minimization algorithms, can be understood as different strategies for solving this matrix reduction problem while minimizing its resulting circuit depth.
 
 \section{Cost-Minimization Method}
 De Brugière et al. \cite{9475957} addressed the problem of minimizing the depth of linear reversible quantum circuits, motivated by the observation that circuit depth is closely tied to execution time under limited qubit decoherence. Their work reformulates the synthesis of a CNOT circuit as the problem of reducing an invertible Boolean matrix to the identity through elementary row and column operations, and proposes two complementary strategies to solve it.
@@ -30,72 +54,34 @@ This greedy cost-minimization framework forms the direct algorithmic foundation 
 
 \begin{table}[htbp]
 \centering
-\begin{tabular}{c|c}
+\begin{tabular}{c|c|c}
 \hline
-Cost Function  & Linear Reversible Cost Function\\
+Cost Function & Direction  & Linear Reversible Cost Function\\
 \hline
-\multirow{2}{*}{$h_{sq}(A) = \sum_{i}(\sum_{j}a_{i,j})^{2}$} & $H_{sqr}(A) = h_{sq}(A) + h_{sq}((A^{-1})^{T})$ \\ 
-\cline{2-2}
- & $H_{sqc}(A) = h_{sq}(A^{T}) + h_{sq}(A^{-1})$ \\ 
+\multirow{2}{*}{$h_{sq}(A) = \sum_{i}(\sum_{j}a_{i,j})^{2}$} & Row & $H_{sqr}(A) = h_{sq}(A) + h_{sq}((A^{-1})^{T})$ \\ 
+\cline{2-3}
+& Column & $H_{sqc}(A) = h_{sq}(A^{T}) + h_{sq}(A^{-1})$ \\ 
 \hline
 \end{tabular}
 	\caption{Square every row's Hamming-weight to enlarge uncomplete part.}
 	\label{tab:square-hamming-weight}
 \end{table}
 
-Shi and Feng \cite{cryptoeprint:2024/381} extended the depth-oriented greedy framework of de Brugière et al. to specifically target the synthesis of low-depth CNOT circuits for symmetric-cipher linear layers, with a particular focus on AES MixColumns. Their central algorithmic contribution refines the original greedy cost-minimization strategy in three respects: (1) in addition to the logarithmic Hamming-weight cost function, they introduce a cost function based on the square of each row's Hamming weight, which more aggressively prioritizes rows that are "far from complete" in Table \ref{tab:square-hamming-weight}; (2) row and column operations are evaluated with distinct cost functions, so that column-wise sparsity is explicitly accounted for during column operations rather than only through the logic used for rows; and (3) they derive a necessary and sufficient condition for determining whether a matrix can be implemented with depth exactly 1, allowing sparse matrices to be handled more efficiently in the final stage of the search~\eqref{eq:depth-one-cost-function}.
+Shi and Feng \cite{cryptoeprint:2024/381} extended the depth-oriented greedy framework of de Brugière et al. to specifically target the synthesis of low-depth CNOT circuits for symmetric-cipher linear layers, with a particular focus on AES MixColumns. Their central algorithmic contribution refines the original greedy cost-minimization strategy in three respects: (1) in addition to the logarithmic Hamming-weight cost function, they introduce a cost function based on the square of each row's Hamming weight, which more aggressively prioritizes rows that are "far from complete" in Table \ref{tab:square-hamming-weight}; (2) row and column operations are evaluated with distinct cost functions, so that column-wise sparsity is explicitly accounted for during column operations rather than only through the logic used for rows; and (3) they derive a necessary and sufficient condition for determining whether a matrix can be implemented with depth exactly 1, allowing sparse matrices to be handled more efficiently in the final stage of the search in Table \ref{tab:product-hamming-weight}.
 
-\begin{equation}
-	\label{eq:depth-one-cost-function}
-	\begin{split}
-	H_{prodr}(A) &= h_{prod}(A) + h_{prod}((A^{-1})^{T}) \\
-	H_{prodc}(A) &= h_{prod}(A^{T}) + h_{prod}(A^{-1})
-	\end{split}
-\end{equation}
+\begin{table}[htbp]
+\centering
+\begin{tabular}{c|c}
+\hline
+Direction  & Linear Reversible Cost Function\\
+\hline
+Row & $H_{prodr}(A) = h_{prod}(A) + h_{prod}((A^{-1})^{T})$ \\ 
+\hline
+Column & $H_{prodc}(A) = h_{prod}(A^{T}) + h_{prod}(A^{-1})$ \\ 
+\hline
+\end{tabular}
+	\caption{Guide the "almost done" cost function for matrix.}
+	\label{tab:product-hamming-weight}
+\end{table}
 
-Applying this improved algorithm to AES MixColumns, they report a CNOT circuit of depth 10, improving on the previous best result of depth 16 reported by Liu et al.\cite{cryptoeprint:2023/1417}, and also outperforming a direct application of de Brugière et al.'s original greedy algorithm, which yields depth 12 on the same matrix. Beyond AES, they apply their method to a broad collection of MDS matrices and linear layers used in other block ciphers (including ANUBIS\cite{barreto2000anubis}, CLEFIA, TWOFISH, and several lightweight ciphers), consistently achieving the lowest reported depths across nearly all cases. In addition to circuit-depth optimization, the paper proposes a compressed pipeline structure for synthesizing full AES encryption circuits and Grover/Encryption oracles, which reduces the number of intermediate qubit registers relative to the standard pipeline structure while retaining comparable round depth, and reports the lowest published T-depth for an AES-128 Encryption oracle to date.
-
-We clarify their work that as pseudocode as Algorithm~\ref{alg:Modified-Shi-Feng-Greedy}
-
-\begin{algorithm}
-\caption{Row/Col Greedy}
-\label{alg:Modified-Shi-Feng-Greedy}
-\begin{algorithmic}[1]
-\Require $M \in \mathbb{F}_{2}^{n \times n}$, $M' \in \mathbb{F}_{2}^{n \times n}$, $L_{r}, L_{c}, Ls_{r}, Ls_{c}, p$ and over\_depth
-\Ensure $Ls_{r}, Ls_{c}, row_{op}, col_{op}$ that implement permutation matrix with length $d$
-\State SIZE $\leftarrow$ length($M$)
-\State minm $\leftarrow$ system.float\_info.max
-\State select\_list $\leftarrow$ list()
-\State $visi_{row}$ $\leftarrow [\varnothing]$, $visi_{col}$ $\leftarrow [\varnothing]$
-\State close\_permu $\leftarrow$ False
-\State LIMIT $\leftarrow$ LATEST\_MINM\_DEPTH
-\While{$M$ != Permutation}
-	\State select\_list.clear()
-	\State $L_{row}$.clear(), $L_{col}$.clear(), $L_{row}^{cost}$.clear(), $L_{col}^{cost}$.clear()
-	
-	\State $H_{r}, H_{c}$, minm $\leftarrow$ functionCost($M, M', p$)
-    
-    \If{!close\_permu}
-		\State $L_{col} \leftarrow L\_Collection(visi_{row})$
-	    \State select\_list, minm $\leftarrow Row\_Op\_Sel( L_{col}, L_{col}^{cost}, M, M', p)$ 
-    \EndIf
-	\State $L_{row} \leftarrow L\_Collection(visi_{row}$)
-	\Function{availableRowCollection}{$visi_{row}$, SIZE}
-    \State \Return $L_{row}$
-	\EndFunction
-	\Function{availableRowOperatorSelection}{$L_{row}$, $L_{row}^{cost}$, $mat$, $inv$, $p$}
-    \State \Return select\_list, minm
-	\EndFunction
-    
-	\Function{availableOperatorExecution}{select\_list, $L_{r}, L_{c}, Ls_{r}, Ls_{c}$, $mat$, $inv$, $row_{op}, col_{op}$, $visi_{row}, visi_{col}$, $d$, SIZE, one}
-    \State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}$, $mat$, $inv$, $row_{op}, col_{op}$, $visi_{row}, visi_{col}$, $d$, one
-	\EndFunction
-    
-    \If{$d >$  LIMIT}
-	    \State $flag$ $\leftarrow$ True
-	    \State \Return
-    \EndIf
-\EndWhile
-\State \Return $L_{r}, L_{c}, Ls_{r}, Ls_{c}, mat, row_{op}, col_{op}, d$, flag
-\end{algorithmic}
-\end{algorithm}
+Applying this improved algorithm to AES MixColumns, they report a CNOT circuit of depth 10, improving on the previous best result of depth 16 reported by Liu et al.\cite{cryptoeprint:2023/1417}, and also outperforming a direct application of de Brugière et al.'s original greedy algorithm, which yields depth 12 on the same matrix. Beyond AES, they apply their method to a broad collection of MDS matrices and linear layers used in other block ciphers (including ANUBIS\cite{barreto2000anubis}, CLEFIA\cite{shirai2007128}, TWOFISH\cite{schneier1998twofish}, and several lightweight ciphers), consistently achieving the lowest reported depths across nearly all cases. In addition to circuit-depth optimization, the paper proposes a compressed pipeline structure for synthesizing full AES encryption circuits and Grover/Encryption oracles, which reduces the number of intermediate qubit registers relative to the standard pipeline structure while retaining comparable round depth, and reports the lowest published T-depth for an AES-128 Encryption oracle to date.

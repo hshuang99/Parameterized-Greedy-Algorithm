@@ -5,7 +5,7 @@ def cost_mat(mat, p):
     ret = 0.0
     SIZE = len(mat)
     match p:
-        case "-1": #log from Brugière: Gaussian elimination versus greedy methods for the synthesis of linear reversible circuits
+        case "-1": #prod from Brugière: Gaussian elimination versus greedy methods for the synthesis of linear reversible circuits
             row_counts = np.sum(mat, axis=1)
             non_zero_counts = row_counts[row_counts > 0]
             ret = np.sum(np.log2(non_zero_counts))
@@ -21,9 +21,9 @@ def cost_mat(mat, p):
                 for j in range(0, SIZE): #column
                     if mat[i][j]: #non-zero entry
                         HammingWeight +=  mat[i][j]
-            ret += HammingWeight ** 2
+                ret += HammingWeight ** 2
             return ret
-        case "3":
+        case "3": #origin from Schaeffer and Perkowski: A Cost Minimization Approach to Synthesis of Linear Reversible Circuits
             identity = np.identity(SIZE)
             ret = float(np.sum(np.logical_xor(mat, identity).astype(int)))
             return ret

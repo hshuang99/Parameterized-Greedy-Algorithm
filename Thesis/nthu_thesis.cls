@@ -18,6 +18,11 @@
 \usepackage{tikz} 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+% Define custom Match-Case blocks
+\algblockdefx[Match]{Match}{EndMatch}[1]{\textbf{match} #1 \textbf{do}}{\textbf{end match}}
+\algblockdefx[Case]{Case}{EndCase}[1]{\textbf{case} #1:}{}
+% Tell LaTeX to stop printing end statements for individual cases to keep it clean
+\algnotext{EndCase} 
 \usepackage{array}
 \usepackage{quantikz}
 \usepackage{circuitikz}

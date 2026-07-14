@@ -32,8 +32,6 @@ def parallelGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op,
         L_row_cst = []; L_col_cst = []
         B_row = []; B_col = []
 
-        if close_permu:
-            p_value = "-1"
         
         minm_cost = functionCost(mat, inverse, p_value)
 
@@ -90,6 +88,9 @@ def parallelGreedy(mat, inverse, fileName, L_r, L_c, Ls_r, Ls_c, row_op, col_op,
         print("The current select_list and minimum cost: ", select_list, minm_cost)
          
         select_list, L_r, L_c, Ls_r, Ls_c, mat, inverse, row_op, col_op, row_visi, col_visi, depth, close_permu = operations.available_operator_execution(select_list, L_r, L_c, Ls_r, Ls_c, mat, inverse, row_op, col_op, row_visi, col_visi, depth, SIZE, close_permu)
+
+        if close_permu:
+            p_value = "-1"
 
         if depth > LIMIT:
             print(f"Depth {depth} over minimum limit {LIMIT}, so break this iteration")
