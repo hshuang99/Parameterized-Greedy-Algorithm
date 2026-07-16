@@ -6,7 +6,7 @@ In this section, we review existing methods for CNOT circuit synthesis that aim 
 \section{CNOT Circuits and Elementary Matrix Operations}\label{sec:CNOT-transformation-to-Matrix-Operations}
 Before reviewing existing synthesis methods, we first establish the mathematical correspondence between CNOT circuits and matrix operations over $\mathbb{F}_{2}$, which underlies all of the approaches discussed in this section.
 
-A CNOT circuit is a quantum circuit composed entirely of CNOT gates. Since each CNOT gate performs a linear, reversible operation on two qubits, the action of an $n$qubit CNOT circuit as a whole can be represented by an invertible $n \times n$ Boolean matrix $A \in GL(n, \mathbb{F}_{2})$. Specifically, a CNOT gate controlled by qubit $i$ and targeting qubit $j$ j corresponds to a type-3 elementary matrix $E(i+j)$, obtained by adding the $i$-th row to the $j$-th row of the identity matrix $I_{n}$. . Applying this gate to a circuit is therefore equivalent to left-multiplying the operator matrix by $E(i+j)$, i.e., performing the elementary row operation $r_{j} \leftarrow r_{i} \oplus r_{j}$.
+A CNOT circuit is a quantum circuit composed entirely of CNOT gates. Since each CNOT gate performs a linear, reversible operation on two qubits, the action of an $n$-qubit CNOT circuit as a whole can be represented by an invertible $n \times n$ Boolean matrix $A \in GL(n, \mathbb{F}_{2})$. Specifically, a CNOT gate controlled by qubit $i$ and targeting qubit $j$ corresponds to a type-3 elementary matrix $E(i+j)$, obtained by adding the $i$-th row to the $j$-th row of the identity matrix $I_{n}$. Applying this gate to a circuit is therefore equivalent to left-multiplying the operator matrix by $E(i+j)$, i.e., performing the elementary row operation $r_{j} \leftarrow r_{i} \oplus r_{j}$.
 
 In addition to type-3 matrices, we also make use of type-1 elementary matrices $E(i \leftrightarrow j)$, obtained by exchanging the $i$-th and $j$-th rows of $I_{n}$. These correspond to a permutation of two qubits, which can be implemented at zero gate cost via simple rewiring rather than an actual quantum gate.
 
@@ -24,7 +24,7 @@ Any invertible matrix \(A \in GL(n, \mathbb{F}_{2})\) can be expressed as a prod
 
 Since qubit permutations are cost-free under full qubit connectivity, this decomposition directly yields a CNOT circuit implementing $A$: each type-3 factor $E(i_{k} + j_{k})$ corresponds to one CNOT gate, and the total number of factors $L$ determines the CNOT count of the resulting circuit. Crucially, if two elementary operations act on disjoint pairs of qubits, the corresponding CNOT gates can be executed in parallel, meaning the depth of the synthesized circuit depends not on $L$ alone, but on how these operations can be grouped into parallel layers.
 
-This equivalence reframes the problem of CNOT circuit synthesis as a purely linear-algebraic one: transforming an invertible matrix  $A$ into the identity matrix (or a permutation matrix) using the fewest possible sequential layers of row and column operations. All of the synthesis methods reviewed below—Gaussian elimination, DaCSynth, and greedy cost-minimization algorithms, can be understood as different strategies for solving this matrix reduction problem while minimizing its resulting circuit depth.
+This equivalence reframes the problem of CNOT circuit synthesis as a purely linear-algebraic one: transforming an invertible matrix  $A$ into the identity matrix (or a permutation matrix) using the fewest possible sequential layers of row and column operations. All of the synthesis methods reviewed below: Gaussian elimination, DaCSynth, and greedy cost-minimization algorithms, can be understood as different strategies for solving this matrix reduction problem while minimizing its resulting circuit depth.
 
 \section{Cost-Minimization Method}
 De Brugière et al. \cite{9475957} addressed the problem of minimizing the depth of linear reversible quantum circuits, motivated by the observation that circuit depth is closely tied to execution time under limited qubit decoherence. Their work reformulates the synthesis of a CNOT circuit as the problem of reducing an invertible Boolean matrix to the identity through elementary row and column operations, and proposes two complementary strategies to solve it.
@@ -63,7 +63,7 @@ Cost Function & Direction  & Linear Reversible Cost Function\\
 & Column & $H_{sqc}(A) = h_{sq}(A^{T}) + h_{sq}(A^{-1})$ \\ 
 \hline
 \end{tabular}
-	\caption{Square every row's Hamming-weight to enlarge uncomplete part.}
+	\caption{Square the Hamming weight of each row to amplify the contribution of incomplete rows.}
 	\label{tab:square-hamming-weight}
 \end{table}
 
@@ -80,7 +80,7 @@ Row & $H_{prodr}(A) = h_{prod}(A) + h_{prod}((A^{-1})^{T})$ \\
 Column & $H_{prodc}(A) = h_{prod}(A^{T}) + h_{prod}(A^{-1})$ \\ 
 \hline
 \end{tabular}
-	\caption{Guide the "almost done" cost function for matrix.}
+	\caption{Guide matrices that are nearly complete toward the permutation matrix.}
 	\label{tab:product-hamming-weight}
 \end{table}
 

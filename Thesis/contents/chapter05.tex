@@ -1,4 +1,77 @@
 \chapter{Application to KLEIN Family}
 \label{ch:klein}
 
-Our work adopts the same greedy cost-minimization paradigm and applies a related enhanced search strategy to the CNOT synthesis problem, but focuses specifically on lightweight block ciphers—particularly the KLEIN family—demonstrating that the underlying approach generalizes beyond AES to other cipher structures with matrix components structurally related to AES MixColumns.
+Our work adopts the same greedy cost-minimization paradigm and applies a related enhanced search strategy to the CNOT synthesis problem, but focuses specifically on lightweight block ciphers, particularly the KLEIN family\cite{cryptoeprint:2026/1007}, demonstrating that the underlying approach generalizes beyond AES to other cipher structures with matrix components structurally related to AES MixColumns.
+
+\section{Overview of KLEIN}
+\label{sec:klein-overview}
+KLEIN is a family of lightweight block ciphers proposed by Gong, Nikova, and Law\cite{gong2011klein}, designed to provide strong security guarantees while remaining suitable for resource-constrained devices such as RFID tags and wireless sensor nodes. The cipher follows a substitution-permutation network (SPN) structure and operates on a 64-bit block across all variants, differing only in key length and round count. Three variants are defined: KLEIN-64/64, which uses a 64-bit key and iterates for 12 rounds; KLEIN-64/80, which uses an 80-bit key and iterates for 16 rounds; and KLEIN-64/96, which uses a 96-bit key and iterates for 20 rounds.
+
+\subsection{Round Structure}
+\label{subsec:klein-round-structure}
+Each round of KLEIN applies four sequential transformations to the 64-bit internal state: \textbf{AddRoundKey}, \textbf{SubNibbles}, \textbf{RotateNibbles}, and \textbf{MixNibbles}. These four steps are repeated for the number of rounds specified by the chosen variant, followed by one additional AddRoundKey operation to complete the encryption.
+
+\textbf{AddRoundKey.} The current state is combined with the round key via bitwise XOR, following the standard construction used in most SPN-based ciphers.
+
+\textbf{SubNibbles.} The 64-bit state is divided into sixteen 4-bit nibbles, and a fixed $4\times4$ S-box is applied to each nibble independently. The KLEIN S-box is an involution (i.e., it satisfies $S(S(x)) = x$ for all inputs), has no fixed points, and achieves algebraic degree-3 properties chosen specifically to provide resistance against linear and differential cryptanalysis while keeping the same S-box usable for both encryption and decryption.
+
+\textbf{RotateNibbles.} The sixteen nibbles produced by the substitution step are cyclically rotated by two bytes, a lightweight permutation that spreads local changes across the state over successive rounds.
+
+\textbf{MixNibbles.} This is the diffusion layer of KLEIN and is of particular relevance to this thesis. The 16 nibbles are grouped into two sets of four bytes each, and every 4-byte group is treated as a vector over $GF(2^{8})$ and multiplied by a fixed MDS (Maximum Distance Separable) matrix:
+
+\begin{equation}
+    \begin{bmatrix}
+        2 & 3 & 1 & 1\\
+        1 & 2 & 3 & 1\\
+        1 & 1 & 2 & 3\\
+        3 & 1 & 1 & 2
+    \end{bmatrix}
+\end{equation}
+
+This construction is applied identically to both 4-byte halves of the state and is structurally identical to the MixColumns transformation used in AES/Rijndael. As we discuss in later sections, this correspondence means that any CNOT circuit optimization achieved for AES MixColumns applies directly to KLEIN's MixNibbles component, since both reduce to the same linear operation over $\mathbb{F}_{2}$, once expanded to bit-level representation.
+
+\subsection{Key Schedule}
+The KLEIN key schedule generates a sequence of round subkeys from the master key using a Feistel-like structure. At each round, the current subkey is split into two 4-byte halves, each half is cyclically rotated, the halves are recombined through an XOR-based swap, and the result is further modified by XOR with the round counter and substitution through the KLEIN S-box applied to specific bytes. This design allows subkeys to be generated incrementally during encryption without requiring the full key schedule to be precomputed and stored, which is advantageous in memory-constrained implementations. The Feistel-like recombination step is intended to increase resistance against related-key and weak-key attacks that have been identified in other lightweight cipher designs.
+
+\subsection{Security Motivation for Quantum Analysis}
+Because KLEIN is a symmetric-key cipher, its primary quantum threat comes from Grover's algorithm\cite{grover1996fast}, which provides a generic quadratic speedup for exhaustive key search, effectively halving the cipher's security level against a quantum adversary. Evaluating this threat precisely requires constructing an explicit quantum circuit for the cipher and measuring its resource cost, inclduing qubit count, gate count, and circuit depth, since these quantities directly determine the practical cost of mounting a Grover-based key-search attack. This motivates the need for optimized quantum implementations of each KLEIN component, and in particular for low-depth realizations of the MixNibbles linear layer, which is the focus of the CNOT circuit optimization presented later in this thesis.
+
+\section{Applying Our Methods to KLEIN MixNibbles}
+Having introduced the structure of KLEIN in Section~\ref{sec:klein-overview}, we now describe how the CNOT circuit synthesis method proposed in Chapter~\ref{ch:our-algorithms} is applied to its MixNibbles component.
+
+\subsection{Matrix Formulation of MixNibbles}
+\label{subsec:mixnibbles-matrix}
+As described in Section~\ref{subsec:klein-round-structure}, the MixNibbles step processes the 64-bit KLEIN state as two independent 4-byte groups, each transformed by multiplication with a fixed MDS matrix over $GF(2^{8})$. Since our synthesis method operates on linear operators over $\mathbb{F}_{2}$ rather than $GF(2^{8})$, we first express this byte-oriented matrix multiplication as an equivalent bit-level linear transformation.
+
+Each 4-byte input group corresponds to 32 input bits, and each output byte is a fixed $GF(2^{8})$-linear combination of the four input bytes under the MDS matrix. Expanding this field multiplication to its bit representation yields a $32 \times 32$ invertible matrix $A \in GL(32, \mathbb{F}_{2})$, where entry $A_{r, i}$ indicates whether input bit $i$ contributes to output bit $r$. This matrix fully characterizes one MixNibbles transformation on a single 4-byte group; since KLEIN applies the identical transformation independently to both halves of its 64-bit state, synthesizing a CNOT circuit for this single $32 \times 32$ matrix is sufficient to implement the entire MixNibbles step, the resulting circuit is simply instantiated twice, once for each half of the state.
+
+\subsection{Structural Correspondence with AES MixColumns}
+A key observation motivating our approach is that the MDS matrix underlying KLEIN's MixNibbles, is identical to the matrix used in the MixColumns transformation of AES/Rijndael, including the same underlying field arithmetic (multiplication in $GF(2^{8})$ modulo the irreducible polynomial $x^{8}+x^{4}+x^{3}+x+1$). To verify this correspondence rigorously rather than by inspection alone, we independently expand both transformations to their bit-level $32 \times 32$ representations over $\mathbb{F}_{2}$ and confirm that the resulting matrices are identical entry-by-entry.
+
+Each output bit of the transformation is a fixed linear combination of the 32 input bits; the resulting matrix $A \in GL(32, \mathbb{F}_{2})$ has a total of 184 nonzero entries, with each row containing either 5 or 7 ones (Hamming weight 5 or 7), reflecting the sparse coefficient structure of the MDS matrix $(1, 2, 3)$ once expanded into $GF(2^{8})$ multiplication tables. Direct comparison confirms that this matrix is identical, entry for entry, to the matrix obtained from AES MixColumns under the same construction.
+
+This correspondence has a direct practical implication for our work: rather than treating KLEIN's linear layer as a new synthesis problem, we can directly reuse the low-depth CNOT circuit obtained for AES MixColumns in Chapter~\ref{ch:our-algorithms} to implement KLEIN's MixNibbles component. This avoids redundant computation and allows us to evaluate our algorithm's applicability to a real-world lightweight cipher without any loss of optimality in the resulting circuit. The expanded MDS matrix is given in Appendix~\ref{app:aes_klein_matrix}.
+
+\begin{equation*}
+    M =
+    \begin{bmatrix}
+        2 & 3 & 1 & 1\\
+        1 & 2 & 3 & 1\\
+        1 & 1 & 2 & 3\\
+        3 & 1 & 1 & 2
+    \end{bmatrix}
+    \quad\xrightarrow{\ \text{bit-level expansion over } \mathbb{F}_2\ }\quad
+    A \in GL(32, \mathbb{F}_2)
+\end{equation*}
+
+\subsection{Application Procedure}
+Applying our method to KLEIN MixNibbles proceeds as follows. We first construct the $32 \times 32$ matrix $A$ as described in Section~\ref{subsec:mixnibbles-matrix}, and confirm its equivalence to the AES MixColumns matrix already processed by our improved greedy algorithm in Chapter 4. Given this equivalence, the CNOT circuit synthesized for AES MixColumns is applied unmodified to each 4-byte half of the KLEIN state, yielding two parallel instances of the same low-depth circuit. The correctness of this substitution follows directly from the matrix equivalence established above: since the two matrices are identical over $\mathbb{F}_{2}$​, any valid CNOT circuit for one is a valid CNOT circuit for the other.
+
+\subsection{Design Considerations for Integration}
+Beyond the synthesis of the MixNibbles matrix itself, integrating the resulting circuit into a complete KLEIN implementation requires a design decision regarding how the linear layer interacts with adjacent operations. Specifically, the SubNibbles output that feeds into MixNibbles, and whether the synthesized circuit is realized as an in-place or out-of-place transformation.
+
+An out-of-place realization computes the MixNibbles output into a fresh set of qubits, leaving the SubNibbles output register unmodified; this simplifies circuit composition but requires additional ancilla qubits to hold the output state. An in-place realization instead overwrites the existing register directly, avoiding the need for extra qubits at the cost of a more constrained synthesis problem, since the sequence of row/column operations must ultimately map the input register onto itself rather than onto a separate output register.
+
+For our application to KLEIN, we adopt an out-of-place conversion of the synthesized circuit, as it allows the low-depth CNOT circuit obtained in Chapter~\ref{ch:our-algorithms} to be applied directly without modification, whereas achieving an equivalent in-place realization would require additional restructuring, and as noted in our matrix path analysis, alternative in-place strategies here incur a substantially higher gate cost. This design choice preserves the depth optimality of our synthesized circuit at the cost of additional ancilla qubits, a trade-off we consider acceptable given this thesis's primary focus on depth minimization.
+
+The resulting circuit, its resource cost, and its comparison against the only existing quantum implementation of KLEIN's MixNibbles component are presented in Chapter~\ref{ch:experimental-results}.

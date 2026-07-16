@@ -4,19 +4,21 @@
 \section{Motivation}
 The growing computational power of quantum computers poses a significant threat to current classical cryptosystems. For example, Shor's algorithm can efficiently solve the factoring problem, while Grover's search algorithm can effectively reduce the security level of symmetric-key cryptography by shortening its effective key length.
 
-On the other hand, quantum computers also open new directions for the design of cryptographic and cryptanalytic techniques, allowing computation to be reconsidered from a physical perspective—a core principle underlying quantum computation and quantum information. In particular, quantum cryptography, as its name suggests, exploits cryptographic mechanisms rooted in quantum circuits. A key advantage of leveraging quantum mechanisms is that they provide information-theoretic secrecy guaranteed by the uncertainty principle.
+On the other hand, quantum computers also open new directions for the design of cryptographic and cryptanalytic techniques, allowing computation to be reconsidered from a physical perspective, a core principle underlying quantum computation and quantum information. In particular, quantum cryptography, as its name suggests, exploits cryptographic mechanisms rooted in quantum circuits. A key advantage of leveraging quantum mechanisms is that they provide information-theoretic secrecy guaranteed by the uncertainty principle.
 
 To improve the efficiency of quantum circuits, it is essential to develop more compact implementations of their underlying constructions. In quantum computing, many applications rely heavily on linear reversible circuits; therefore, deploying efficient methods to reduce computational cost is key to enabling more practical algorithms.
 
 Currently, most symmetric cryptosystems are constructed using a significant number of CNOT gates. Drawing inspiration from the field of Very Large Scale Integration (VLSI), we aim to reduce the cost of quantum algorithms by focusing on circuit depth as our primary metric, targeting linear scaling.
 
-In this work, we propose an enhanced randomized greedy algorithm that employs heuristic methods to achieve the shallowest possible circuit depth with a minimum number of CNOT gates. Our approach not only guarantees a speedup in the execution of quantum cryptographic algorithms but also reduces the impact of quantum noise and hardware constraints on computational results.
+In this work, we propose an enhanced depth-oriented greedy algorithm that employs heuristic methods to achieve the shallowest possible circuit depth with a minimum number of CNOT gates. Our approach not only guarantees a speedup in the execution of quantum cryptographic algorithms but also reduces the impact of quantum noise and hardware constraints on computational results.
 
 \section{Problem Statement}
 In this study, we address the challenge of finding the optimal (i.e., shallowest) depth for constructing the matrix components of symmetric ciphers in gate-based quantum circuits. All matrices are defined over $\mathbb{F}_{2}$. We subsequently verify that our results are applicable to real-world block cipher schemes.
 
 \section{Contributions}
-Our research focuses on optimizing the quantum circuits of block ciphers—specifically, components that provide diffusion and confusion properties for symmetric cryptography. We survey the latest quantum circuit implementations of lightweight cryptosystems, and demonstrate that our improved AES MixColumns (Rijndael) circuit significantly reduces the number of CNOT gates required, a result that also extends to the KLEIN family.
+Our research focuses on optimizing the quantum circuits of block ciphers. Specifically, components that provide diffusion and confusion properties for symmetric cryptography. We survey the latest quantum circuit implementations of lightweight cryptosystems, and demonstrate that our improved AES MixColumns (Rijndael) circuit significantly reduces the number of CNOT gates required, a result that also extends to the KLEIN family.
+
+All of source codes and results of this paper are published in: https://github.com/\\hshuang99/Depth-Oriented-Greedy-Algorithms-for-Optimizing-Linear-Reversible-\\Quantum-Circuits-of-Block-Ciphers
 
 \section{Organization}
 The remainder of this paper is organized as follows. Chapter~\ref{ch:preliminaries} introduces the preliminary concepts and notation used throughout this work. Chapter~\ref{ch:existing-approaches} reviews existing approaches to constructing optimal quantum circuits. Chapter~\ref{ch:our-algorithms} presents our proposed greedy algorithm. Chapter~\ref{ch:klein} introduces the lightweight cipher family KLEIN and demonstrates that our optimized circuits are applicable to it. Chapter~\ref{ch:experimental-results} presents our experimental results. Finally, Chapter~\ref{ch:discussion} and \ref{ch:conclusion} provide discussion and conclusions, respectively.

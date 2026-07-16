@@ -1,2 +1,39 @@
 \chapter{Conclusion}
 \label{ch:conclusion}
+
+This thesis addressed the problem of synthesizing low-depth quantum circuits for the linear reversible components of symmetric-key block ciphers, motivated by the fact that circuit depth is a critical performance metric on decoherence-limited, gate-based quantum architectures. Building on Shi and Feng's greedy synthesis algorithm, we developed a depth-oriented approach that bidirectionally explores the space of shallow CNOT circuits, and we demonstrated its effectiveness across several classes of matrices arising in symmetric-key cryptography. The main contributions of this work are summarized as follows.
+
+\paragraph{An improved depth-oriented greedy synthesis algorithm.}
+We refined several components of prior depth-oriented greedy algorithm research (Chapter~\ref{ch:our-algorithms}), yielding measurable improvements in the depth of the synthesized circuits relative to earlier approaches. In particular, for the AES MixColumns transformation, our method produced a CNOT circuit of depth $9$, outperforming previously reported greedy algorithms for the same matrix (Chapter~\ref{ch:experimental-results}).
+
+\paragraph{Generalization across block ciphers and MDS matrices.}
+Beyond AES MixColumns, we showed that our synthesis method generalizes effectively to a range of MDS matrices used in other block ciphers, consistently producing low-depth circuits across this class of linear transformations (Chapter~\ref{ch:experimental-results}). We additionally verified the robustness of our method on unstructured, randomly generated invertible matrices, confirming that its effectiveness is not limited to matrices possessing the algebraic structure typical of cryptographic MDS matrices (Appendix~\ref{app:random_matrix}).
+
+\paragraph{Structural correspondence between AES and KLEIN.}
+We established a direct correspondence between the bit-level expansion of the AES MixColumns matrix and the MixNibbles matrix of the KLEIN lightweight block cipher, both being $4 \times 4$ MDS matrices over $\mathbb{F}_{2^8}$ sharing the same defining polynomial $z^8 + z^4 + z^3 + z + 1$ (Chapter~\ref{ch:klein}). This correspondence allowed us to directly reuse our AES-optimized circuit for KLEIN's linear layer without re-solving the synthesis problem from scratch.
+
+\paragraph{A resource-efficient MixNibbles circuit for the KLEIN family.}
+We demonstrated the practical applicability of our method to the KLEIN family of lightweight block ciphers by synthesizing an out-of-place MixNibbles circuit that satisfies the cipher's required diffusion property. Relative to the most recent prior quantum implementation of KLEIN~\cite{cryptoeprint:2026/1007}, our circuit reduces the CNOT count of the MixNibbles layer by \SI{64.4}{\percent} ($624 \to 222$ gates) and its depth by \SI{94.2}{\percent} ($156 \to 9$ layers) (Section~\ref{subsec:compounding-effect}), at the cost of additional ancilla qubits required by the out-of-place circuit structure (Section~\ref{sec:out-of-place-tradeoff}). When incorporated into the full KLEIN round structure, this single-component optimization reduces the overall cipher's CNOT count by approximately \SI{46}{\percent} across all three KLEIN variants (Table~\ref{tab:full-cipher-cnot}).
+
+\paragraph{Overall assessment.}
+Taken together, these results show that depth-oriented greedy synthesis, when suitably refined and combined with structural insight into the target matrix (such as the shared algebraic structure between AES and KLEIN), can yield substantial and compounding improvements in the resource cost of quantum circuits for symmetric-key cryptographic primitives, with direct implications for both cryptanalytic attack circuits and the broader feasibility of executing these ciphers on near-term quantum hardware.
+
+While this work demonstrates the effectiveness of the proposed synthesis method across a range of matrices and its practical applicability to KLEIN, several directions remain open for future investigation.
+
+\paragraph{Scaling to larger matrix sizes.}
+As discussed in Chapter~\ref{ch:discussion}, the proposed algorithm performs well on small- to mid-scale matrices, such as the $16 \times 16$ and $32 \times 32$ cases evaluated in this work, but requires substantially more computation time when applied to $64 \times 64$ matrices. Future work could investigate algorithmic improvements, such as tighter pruning heuristics or parallelized search strategies, to extend the practicality of this approach to larger block sizes without a proportional increase in synthesis time.
+
+\paragraph{Runtime complexity comparison with circuit-size-optimal methods.}
+This work characterized the runtime complexity of our synthesis procedure as $O(n^3)$ in the worst case. A direct, like-for-like comparison with the runtime complexity of alternative synthesis algorithms, such as de Brugière et al.'s DaCSynth, was outside the scope of this work, since the latter's published bound describes circuit size rather than synthesis runtime. Establishing such a comparison would clarify the practical trade-offs between depth-oriented heuristic search and provably bounded synthesis methods.
+
+\paragraph{Extension to non-invertible transformations.}
+The proposed method is restricted to unitary quantum operations and therefore requires the underlying matrix to be invertible. Extending this approach to accommodate non-invertible data would require incorporating quantum error-correction techniques to construct a fault-tolerant encoding capable of appropriately structuring such information, which was explicitly outside the scope of the present work. Investigating how depth-oriented synthesis interacts with such encodings is a promising direction for future research.
+
+\paragraph{Application to additional lightweight block ciphers.}
+Building on the structural correspondence established between AES and KLEIN, future work may extend this synthesis approach to other lightweight block ciphers whose linear layers admit similar algebraic structure. This mirrors a direction suggested in prior work on KLEIN's quantum implementation~\cite{cryptoeprint:2026/1007}, which identifies TWINE and Piccolo as candidates for comparable analysis.
+
+\paragraph{Full round-level and full-cipher depth analysis.}
+The depth improvements reported in this work were established at the level of individual linear components (e.g., MixColumns, MixNibbles). A complete analysis of total circuit depth across an entire cipher round, accounting for the interleaving and scheduling of MixNibbles alongside AddRoundKey, SubNibbles, and the key scheduler, was identified in Chapter~\ref{ch:discussion} as a direction for future work, and would provide a more complete picture of the end-to-end depth improvement achievable using the proposed circuits.
+
+\paragraph{Hardware and simulator validation.}
+Finally, the circuits presented in this work were evaluated in terms of abstract resource counts (CNOT count, depth, and qubit count) under an idealized, fully-connected architecture model. Validating these circuits on realistic NISQ hardware or noise-aware simulators, accounting for qubit connectivity constraints and gate error rates, would provide further evidence of their practical utility and is left as a direction for future work.

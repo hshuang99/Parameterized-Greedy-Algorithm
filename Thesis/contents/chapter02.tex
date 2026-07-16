@@ -13,29 +13,29 @@ In this section, we present the notations used throughout this thesis, as listed
         \hline
         Notation  & Definition\\
          \hline
-         $\ket{0}, \ket{1}$& \\
-          \hline
-         $\alpha, \beta$ & The probabilies for $\ket{0}$ and $\ket{1}$\\
-         \hline
-         $\ket{\psi}$ & The quantum bit or qubit for short, it is used for describe linear combinations for states.\\
+         $\ket{0}, \ket{1}$ & They are the two computational basis states of a single qubit, represented as orthonormal column vectors in a 2-dimensional complex Hilbert space $\mathbb{C}^{2}$ that $$\ket{0} = \begin{pmatrix}1 \\ 0\end{pmatrix}, \ket{1} = \begin{pmatrix}0 \\ 1\end{pmatrix}$$\\
          \hline
          $\dagger$ & The operation that transpose and then complex conjugating the pauli matrix gate.\\
          \hline
-         $\mathbb{F}_{2}$ & The finite field with two elements 0 and 1 \\
+         $\mathbb{F}_{2}$ & The finite field with two elements $\{0, 1\}$, where addition and multiplication are performed modulo 2. \\
          \hline
-         $\oplus$ & The XOR computation in logic representation\\
+         $\oplus$ & The XOR computation in logic representation.\\
          \hline
-         $E(i + j)$ & \\
+         $I_{n}$ & The $n \times n$ identity matrix over $\mathbb{F}_{2}$.\\
+         \hline
+         $GF(2^{n})$ & The Galois field (finite field) with $2^{n}$ elements, the unique finite field of characteristic 2 and order $2^{n}$, constructed as a degree-$n$ extension of $\mathbb{F}_{2}$.\\
+         \hline
+         $GL(n, \mathbb{F}_{2})$ & The general linear group of degree $n$ over $\mathbb{F}_{2}$, the group of all invertible $n \times n$ matrices with entries in $\mathbb{F}_{2}$, under matrix multiplication.\\
     \hline
 \end{tabular}
-    \caption []{Some notations used in this paper}
+    \caption{Some notations used in this paper}
     \label{tab:Notations}
 \end{table}
 
 
 
 \section{Quantum Circuits}
-From the Enigma machine to computers based on the von Neumann architecture, all of these systems consist of wires and logic gates to execute their operations. Similarly, quantum computers are also constructed from analogous components, but instead combine quantum wires and quantum logic gates to form quantum circuits, which are used to transfer quantum bits and execute algorithms.
+From the Enigma machine to computers based on the von Neumann architecture, all of these systems consist of wires and logic gates that execute their operations. Quantum computers are constructed from analogous components, combining quantum wires and quantum logic gates to form quantum circuits, which carry quantum bits and execute algorithms.
 
 These are the flesh and blood of quantum computers, and we use these elements to describe the superposition state through Dirac notation:
 
@@ -48,9 +48,9 @@ In this section, we introduce some fundamental elements of quantum circuits, inc
 
 Since gate-level circuits are the most commonly used construction today, we focus our efforts on reducing them.
 
-First, the NOT gate, or, in terms of the Pauli matrices, the X gate, has an operation that can be defined by its truth table: from a classical perspective, it maps the input bit $0 \rightarrow 1$ and $1 \rightarrow 0$. From a quantum perspective, however, we can instead take the inputs as $\ket{0}$ and $\ket{1}$, and the gate acts linearly on $\ket{\psi}$. Through the matrix $X$, the state changes as follows:
+First, consider the NOT gate, or, in terms of the Pauli matrices, the $X$ gate. Its operation can be defined by its truth table: from a classical perspective, it maps the input bit $0 \rightarrow 1$ and $1 \rightarrow 0$. From a quantum perspective, however, we instead take the inputs as $\ket{0}$ and $\ket{1}$, and the gate acts linearly on $\ket{\psi}$. Through the matrix $X$, the state changes as follows:
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \begin{minipage}{0.45\textwidth}
 \centering
@@ -72,9 +72,10 @@ X \equiv \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}
 \]
 \end{minipage}
 \caption{The left hand side is truth table for NOT gate, and right hand side is pauli matrix X that quantum perspective of NOT gate.}
+\label{fig:not-truth-table-and-pauli-x}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \begin{minipage}{0.45\textwidth}
 \centering
@@ -99,22 +100,21 @@ X \equiv \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}
 \lstick{$\ket{a}$} & \gate{X} & \rstick{$\ket{a \oplus 1}$} \qw
 \end{quantikz}
 \end{minipage}
+\caption{Left side is logic not gate, and right side is Pauli-X quantum gate.}
+\label{fig:NOT-gate}
 \end{figure}
 
-We consider it from a column-wise perspective $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$ that
-
+We can also represent the state as a column vector, $\begin{bmatrix} \alpha \\ \beta \end{bmatrix}$, such that
 
 \begin{equation}
     X\begin{bmatrix}\alpha \\ \beta\end{bmatrix} = \begin{bmatrix}\beta \\ \alpha\end{bmatrix}
 \end{equation}
 
-This is a single-qubit gate that also satisfies the \textbf{unitary} property, meaning $X^{\dagger}X \equiv I$. It transforms our input from $\alpha\ket{0} + \beta\ket{1}$ into $\alpha\ket{1} + \beta\ket{0}$, where the normalization condition $|\alpha|^{2} + |\beta|^{2} = 1$ is preserved.
+This is a single-qubit gate that also satisfies the \textbf{unitary} property, meaning $X^{\dagger}X \equiv I$. It transforms the input state $\alpha\ket{0} + \beta\ket{1}$ into $\alpha\ket{1} + \beta\ket{0}$, where the normalization condition $|\alpha|^{2} + |\beta|^{2} = 1$ is preserved.
 
-Next, for compute two qubits for achieve generalized XOR operation, Controlled-NOT gate or CNOT gate are demand. Exclusive-OR, what a beautiful operator, it can perfectly diffusion bit-stream in classical computer, also provide an efficient way to execution then transfer information in quantum circuit, this multi-qubit quantum logic gate has two inputs, one is the control in top line, and another one is the target in bottom line.
+Next, to operate on two qubits and achieve a generalized XOR operation, the Controlled-NOT gate, or CNOT gate, is required. The exclusive-OR is a remarkably useful operator: it diffuses bit-streams efficiently in classical computation, and likewise provides an efficient means of executing and transferring information in quantum circuits. This multi-qubit quantum logic gate has two inputs, one serving as the control, on the top line, and the other as the target, on the bottom line.
 
-If we would like understanding it more detailed, we shown their truth table.
-
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \begin{minipage}{0.45\textwidth}
 \centering
@@ -144,11 +144,12 @@ U_{CN} \equiv
 \]
 \end{minipage}
 \caption{The left hand side is truth table for CNOT gate, and right hand side is it matrix that quantum perspective of CNOT gate.}
+\label{fig:CNOT-truth-table-and-matrix}
 \end{figure}
 
-and also we can inspect them from logic gates view
+To understand it in more detail, we present its truth table in Figure~\ref{fig:CNOT-truth-table-and-matrix}, and we can also inspect these gates from a logic-gate perspective, as shown on the left-hand side of Figure~\ref{fig:XOR-and-CNOT}.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \begin{minipage}{0.45\textwidth}
 \centering
@@ -174,17 +175,15 @@ and also we can inspect them from logic gates view
 \lstick{$\ket{b}$} & \targ{1} & \rstick{$\ket{b \oplus a}$} \qw
 \end{quantikz}
 \end{minipage}
+\caption{Left-hand side is Logic gates of XOR, right-hand side is quantum CNOT gate.}
+\label{fig:XOR-and-CNOT}
 \end{figure}
 
-its behavior is if the control qubit set to 0, then target qubit do not need change. If the control qubit is set to 1, then the targte qubit will be ﬂip, in target qubit we can summarized as $\ket{A, B} \rightarrow \ket{A, B \oplus A}$ and this gate also is a unitary matrix that $U_{CN}^{\dagger}U_{CN} \equiv I$.
+Its behavior is as follows: if the control qubit is set to $0$, the target qubit remains unchanged; if the control qubit is set to $1$, the target qubit is flipped. This can be summarized as $\ket{A, B} \rightarrow \ket{A, B \oplus A}$, and this gate is likewise a unitary matrix present on the right-hand side of Figure~\ref{fig:XOR-and-CNOT}, satisfying $U_{CN}^{\dagger}U_{CN} \equiv I$.
 
-This gate is so powerful that XOR and NAND is irreversible or non-invertible, which means after $A \oplus B$, we cannot get the A and B were, this is loss of information with action of XOR gate, but unitary gates are always invertible, for example CNOT target fanout is $B \oplus A$.
+This gate is powerful precisely because operations such as XOR and NAND are irreversible, or non-invertible: after computing $A \oplus B$, we cannot recover the original values of $A$ and $B$, since information is lost in the process. Unitary gates, however, are always invertible. For example, the CNOT gate outputs $B \oplus A$ on the target qubit; we can recover the original input by applying the control fanout again, since $B \oplus A \oplus A \equiv B$. Because the inverse of a unitary matrix is itself unitary, any unitary quantum gate can always be inverted by another unitary quantum gate.
 
-we can reverse the input that adding control fanout to $B \oplus A \oplus A \equiv B$.
-
-since inverse a unitary matrix it still a unitary matrix, so that any unitary quantum gates can always inverted by other unitary quantum gate.
-
-From the NCT-based quantum logic gates, the last one is Toffoli gate, sometimes called Controlled-Controlled NOT gate or CCNOT, for simulate all of classical computer algorithm, we cannot lack it, because this gate can simulate NAND gates, and make irreversible to reversible, same as other gates, this gate is also an unitary gate that $U_{TF}^{\dagger}U_{TF} \equiv I$, and its inverse is itself.
+The last of the NCT-based quantum logic gates is the Toffoli gate, sometimes called the Controlled-Controlled-NOT gate, or CCNOT gate. This gate is indispensable for simulating classical computation, since it can simulate the NAND gate and thereby convert irreversible classical operations into reversible ones. Like the other gates discussed above, the Toffoli gate is unitary, satisfying $U_{TF}^{\dagger}U_{TF} \equiv I$, and it is its own inverse.
 
 \begin{figure}[h]
 \centering
@@ -226,9 +225,9 @@ U_{TF} \equiv
 \caption{The left hand side is truth table for Toffoli gate, and right hand side is it matrix that quantum perspective of CCNOT gate.}
 \end{figure}
 
-The Toffoli gate has three input bits, two of them are control bits, and left one in bottom is target bit which will ﬂipped if both control bits are set to 1, otherwise, not change. So it acts like $(a, b, c) \rightarrow (a, b, c \oplus a \cdot b) \rightarrow (a, b, c)$.
+The Toffoli gate has three input bits: two of them are control bits, and the remaining one, on the bottom line, is the target bit, which is flipped if both control bits are set to $1$; otherwise, it remains unchanged. Its action can be written as $(a, b, c) \rightarrow (a, b, c \oplus a \cdot b)$.
 
-we can see its circuit like
+We can also see this represented as a circuit, as follows:
 
 \begin{figure}[h]
 \centering
@@ -237,10 +236,10 @@ we can see its circuit like
 \lstick{$\ket{b}$} & \ctrl{1} & \rstick{$\ket{b}$} \qw \\
 \lstick{$\ket{c}$} & \targ{} & \rstick{$\ket{c \oplus a \cdot b}$} \qw
 \end{quantikz}
-\caption{The Toffoli gates}
+\caption{The Toffoli gate}
 \end{figure}
 
-and we can build a classical NAND gate that prepare third input as 1, then it will complete the two control inputs, this ﬁx state sometimes we called it ancilla state. and somtimes we can just FANOUT one of control inputs using two ancilla states.
+We can also construct a classical NAND gate by preparing the third input as $1$; the two control inputs then serve as the NAND gate's two inputs. This fixed, prepared state is sometimes called an ancilla qubit. Additionally, we can fan out one of the control inputs using two ancilla qubits.
 
 \begin{figure}[h]
 \centering
@@ -264,16 +263,119 @@ and we can build a classical NAND gate that prepare third input as 1, then it wi
 \caption{The left hand side is truth table for Toffoli gate, and right hand side is it matrix that quantum perspective of CCNOT gate.}
 \end{figure}
 
-Now we have computatioanl capability from NOT gate, XOR gate and AND gate, thus, any classical circuit can be replaced by an equivalent quantum circuit containing only reversible elements.
+We now have the computational capability provided by the NOT, XOR, and AND gates; thus, any classical circuit can be replaced by an equivalent quantum circuit containing only reversible elements.
 
 \section{Optimization Target}
 
-In this work, our goal is reduce depth of quantum circuits as metric, which is inﬂuence the time cost and storage cost for quantum algorithm.
+In this work, our goal is to reduce circuit depth as our primary metric, which influences both the time cost and the resource cost of quantum algorithms.
 
-Any multi-qubit logic gate can be composed from CNOT and single-qubit gates. In fact, most quantum algorithm circuits currently rely heavily on CNOT gates in gate-based quantum computers.
+Any multi-qubit logic gate can be composed from CNOT and single-qubit gates; in fact, most quantum algorithm circuits implemented on gate-based quantum computers currently rely heavily on CNOT gates.
 
-Therefore, shallower circuit depth can significantly decrease the number of operators required, thereby reducing the circuit's exposure to noise and quantum decoherence.
+Therefore, a shallower circuit reduces the number of operations exposed to noise over time, thereby mitigating the effects of decoherence.
 
 \section{Maximum Distance Separable (MDS) Matrix}
+\label{sec:mds}
 
-In this section, we wolud like explain what is the Maximum Distance Separable matrix, short called it as MDS matrix, which is a 
+Substitution-Permutation Networks (SPNs) achieve resistance against differential
+and linear cryptanalysis by combining a non-linear substitution layer (the S-box)
+with a linear diffusion layer, following the wide trail design strategy of Daemen
+and Rijmen~\cite{daemen2001wide}. While the S-box mixes bits within a small word, the
+diffusion layer is responsible for mixing words across the state, and its
+cryptographic strength is captured by the notion of branch number.
+
+\subsection{Branch Number}
+
+Let the internal state of a cipher be viewed as $k$ words of $n$ bits each, i.e.\
+an element of $(\mathbb{F}_2^n)^k$. For $x \in (\mathbb{F}_2^n)^k$, define its
+weight $w(x)$ as the number of non-zero $n$-bit words in $x$. For a linear
+mapping $L \in M_k(M_n(\mathbb{F}_2))$ acting on the state, the differential
+and linear branch numbers are defined as
+
+\begin{equation}
+B_d(L) = \min_{x \neq 0} \{\, w(x) + w(L(x)) \,\}, \qquad
+B_l(L) = \min_{x \neq 0} \{\, w(x) + w(L^{\top}(x)) \,\},
+\end{equation}
+
+where $L^{\top}$ denotes the linear mapping whose matrix representation is the
+transpose of that of $L$~\cite{daemen2001wide}. These quantities lower-bound the number of
+active S-boxes over two consecutive rounds of an SPN cipher under differential
+(resp.\ linear) cryptanalysis, so a designer wants both branch numbers to be as
+large as possible. For a $k$-word diffusion layer, the branch number is bounded
+above by $k+1$, and it can be shown that the differential branch number is
+maximal if and only if the linear branch number is maximal.
+
+\subsection{Definition and Characterization}
+
+A linear mapping achieving the maximal branch number $k+1$ is called an
+MDS mapping, and its matrix representation is an MDS matrix. The
+name derives from the connection to Maximum Distance Separable codes: a linear
+mapping has maximal branch number precisely when the corresponding generator
+matrix defines an MDS code.
+
+When the coefficients of the matrix are restricted to multiplications by
+elements of a finite field $\mathrm{GF}(2^n)$, the classical setting, e.g.\ for
+the AES MixColumns operation, MDS-ness admits a simple algebraic test:
+
+\begin{proposition}
+A matrix $M \in M_k(\mathrm{GF}(2^n))$ is MDS if and only if every minor
+(i.e.\ the determinant of every square submatrix) of $M$ is non-zero.
+\end{proposition}
+
+This characterization extends beyond fields: if the entries of $M$ are drawn
+from a commutative ring, $M$ has maximal branch number if and only if all of
+its minors are invertible elements of that ring~\cite{augot2013exhaustive}. More generally,
+when the coefficients are arbitrary linear mappings in $M_n(\mathbb{F}_2)$
+rather than field elements, one instead requires the determinants of the
+corresponding block submatrices (viewed as binary matrices) to be non-zero.
+
+\subsection{The AES MixColumns Matrix}
+
+The canonical example is the MixColumns operation of the AES, a $4\times 4$ MDS
+matrix over $\mathrm{GF}(2^8)$:
+
+\begin{equation}
+M_{\mathrm{AES}} =
+\begin{pmatrix}
+2 & 3 & 1 & 1 \\
+1 & 2 & 3 & 1 \\
+1 & 1 & 2 & 3 \\
+3 & 1 & 1 & 2
+\end{pmatrix},
+\end{equation}
+
+where the field is $\mathrm{GF}(2^8) = \mathbb{F}_2[\alpha]/(\alpha^8 + \alpha^4 +
+\alpha^3 + \alpha + 1)$, and the coefficients $2$ and $3$ denote the field
+elements $\alpha$ and $\alpha+1$ respectively~\cite{daemen2002design}. One can verify
+directly that every minor of $M_{\mathrm{AES}}$ is a non-zero polynomial in
+$\alpha$, confirming its MDS property and, correspondingly, that MixColumns
+achieves the maximal branch number of $5$ for $k=4$.
+
+\subsection{Formal MDS Matrices over $\mathbb{F}_2[\alpha]$}
+
+For the purposes of lightweight and low-depth circuit synthesis, it is useful to
+generalize the field-based view above by treating $\alpha$ as an
+undefined linear operation rather than a fixed field element, following
+the formal-matrix approach of Sajadieh et al.~\cite{sajadieh2012recursive}, Wu et al.~\cite{ciphers2013recursive},
+and Augot and Finiasz~\cite{augot2013exhaustive}. Concretely, one considers matrices $M \in
+M_k(\mathbb{F}_2[\alpha])$ whose entries are polynomials in a symbolic
+$\alpha$, and asks whether all minors of $M$, evaluated as polynomials, are
+non-zero. If so, $M$ is called a formal MDS matrix, and by
+Proposition~\ref{prop:instantiation} (below) it can be instantiated by
+substituting $\alpha$ with any concrete linear mapping $A \in M_n(\mathbb{F}_2)$
+whose minimal polynomial is coprime to every minor of $M$, yielding a genuine
+MDS matrix $M(A)$ over $\mathbb{F}_2^n$.
+
+\begin{proposition}
+\label{prop:instantiation}
+Let $M \in M_k(\mathbb{F}_2[\alpha])$ be a formal matrix with minors
+$\{m_{I,J}\}$, and let $A \in M_n(\mathbb{F}_2)$ have minimal polynomial
+$\mu_A$. Then $M(A)$ is MDS if and only if $\mu_A$ is relatively prime to
+every $m_{I,J}$~\cite{duval2018mds}.
+\end{proposition}
+
+This formal viewpoint is what makes it possible to search directly for
+low-cost circuits realizing an MDS matrix, rather than searching for a
+matrix first and optimizing its implementation afterward, an approach
+particularly relevant to Chapter~\ref{ch:klein}, where we treat AES MixColumns
+(and, by structural analogy, the KLEIN MixNibbles matrix) as an instance of
+this formal MDS framework for the purpose of quantum CNOT-depth optimization.

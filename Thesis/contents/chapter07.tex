@@ -1,2 +1,59 @@
 \chapter{Discussion}
 \label{ch:discussion}
+
+In this study, our approach is based on a depth-oriented heuristic that searches for a set of synthesized operators; this heuristic does not guarantee that every combination will yield the optimal result. For practical applications, a collection of candidate operations would therefore need to be maintained for reuse across individual quantum computations.
+
+Furthermore, our strategy targets unitary quantum operations, which requires that the underlying data and matrices be invertible. However, not all data of practical interest is invertible. Accommodating such non-invertible data would require quantum error-correction techniques to construct a fault-tolerant encoding scheme capable of appropriately structuring the information; this extension falls outside the scope of the present work.
+
+Moreover, if every block-cipher matrix $A$ is treated as an $n \times n$ matrix, an exhaustive search over all candidate operators at each step requires $O(n^{2})$ time. If the inverse matrix $A^{-1}$ is additionally recomputed after every update, the overall time complexity is bounded above by $O(n^{3})$. By comparison, de Brugière et al.'s DaCSynth algorithm guarantees a circuit of at most $\frac{4}{3}n + 8\lceil \log_2(n) \rceil$ CNOT gates for an $n$-qubit linear operator in the worst case. Since this figure describes an upper bound on the size of the synthesized circuit rather than the running time of the synthesis procedure, the two quantities are not directly comparable; nonetheless, in terms of the computational overhead required to search the operator space, our approach incurs substantially greater cost.
+
+Similarly to Shi and Feng's greedy algorithm, our approach performs well on small-scale matrices, as demonstrated in Chapter~\ref{ch:experimental-results} for $16 \times 16$ and $32 \times 32$ block sizes. However, executing our approach on $64 \times 64$ matrices requires substantially more computation time. Our algorithm is therefore best suited to constructing small- to mid-scale quantum circuits in NISQ environments, where it can be executed tens of thousands of times to identify the best outcome for a single matrix.
+
+Throughout this work, we focused primarily on matrices arising from the general linear group and finite-field structures; however, we also considered unstructured random matrices. Specifically, we randomly generated invertible matrices and confirmed that our method performs well on these as well. An example, generated using a random seed of 73, is provided in Appendix~\ref{app:random_matrix}.
+
+\section{The Out-of-Place Trade-off}
+\label{sec:out-of-place-tradeoff}
+
+The depth and CNOT-count improvements reported in Section~\ref{subsec:compounding-effect} arise from a structural design choice: the proposed MixNibbles circuit is synthesized as an out-of-place linear transformation, in contrast to the in-place circuit of \cite{cryptoeprint:2026/1007}. We examines the source of the improvement, the resource cost it incurs, and the circumstances under which each design is preferable.
+
+\subsection{Why Out-of-Place Synthesis Reduces Depth}
+
+An in-place linear circuit, such as that produced by Gaussian-elimination-based synthesis methods (e.g.\ Patel--Markov--Hayes~\cite{markov2008optimal}), must write each output bit back onto the same physical wire that originally held the corresponding input bit. This constraint forces every CNOT gate that shares a target or control wire with a prior gate to execute strictly after it, since both gates act on the same qubit. As the number of wires reused for both input and output grows, so does the number of forced sequential dependencies, which caps the degree of parallelism available to the circuit scheduler. This directly explains why the in-place implementation of \cite{cryptoeprint:2026/1007} exhibits a comparatively high depth (\num{156}) relative to its CNOT count (\num{624}): a large fraction of its \num{624} CNOT gates are serialized due to wire reuse.
+
+By contrast, the proposed circuit computes each output bit onto a dedicated ancilla wire that is disjoint from the input register. Because outputs no longer compete with inputs (or with one another) for the same physical qubit during the computation, the greedy depth-optimizing synthesis algorithm developed in Chapter~\ref{ch:our-algorithms} is free to schedule independent CNOT gates concurrently wherever the underlying linear dependencies allow. This additional scheduling freedom is the principal source of the \SI{94.2}{\percent} depth reduction reported in Table~\ref{tab:mixnibbles-comparison}; the accompanying \SI{64.4}{\percent} reduction in total CNOT count is a separate, additional benefit attributable to the matrix factorization strategy of the synthesis algorithm itself, rather than to the out-of-place structure alone.
+
+\subsection{The Ancilla Qubit Cost}
+
+The improvement in depth and gate count is not obtained without cost. Because the proposed circuit writes its outputs to fresh wires rather than overwriting the input register, it requires additional ancilla qubits equal to the size of the transformed block: up to \num{32} extra qubits per MixNibbles column, or up to \num{64} additional qubits when applied to the full 64-bit KLEIN state. The in-place circuit of \cite{cryptoeprint:2026/1007}, by contrast, requires no ancilla qubits for this operation, reusing the existing 64-bit state register directly. Table~\ref{tab:tradeoff-summary} summarizes this trade-off explicitly.
+
+\begin{table}[htbp]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Implementation} & \textbf{CNOT} & \textbf{Depth} & \textbf{Ancilla qubits} & \textbf{Total qubits} \\
+\midrule
+In-place~\cite{cryptoeprint:2026/1007} & 624 & 156 & 0  & 64  \\
+Proposed (out-of-place)            & 222 & 9   & up to 64 & up to 128 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Resource trade-off between in-place and out-of-place MixNibbles circuits.}
+\label{tab:tradeoff-summary}
+\end{table}
+
+Whether this trade-off is favorable depends on which resource is scarce for the target hardware and computational model, discussed next.
+
+\subsection{Ancilla Reuse Across Rounds}
+
+Within the KLEIN round function, the ancilla wires produced by MixNibbles are not discarded: they are relabeled as the new state register and carried forward into the AddRoundKey step of the following round, exactly as the original state register would have been in the in-place design. Under this convention, no additional uncomputation step is required, and the ancilla overhead is incurred once per invocation rather than accumulating across rounds. If a subsequent application instead required the original register layout to be restored after MixNibbles, for example, to reuse the same physical wires for an unrelated computation, an explicit uncomputation step would be necessary, which would partially offset the depth savings reported above. This work adopts the wire-relabeling convention throughout, consistent with the round-to-round data flow of the KLEIN cipher.
+
+\subsection{NISQ versus Fault-Tolerant Considerations}
+
+The relative importance of qubit count versus circuit depth depends strongly on the target quantum computing paradigm.
+
+On near-term, noisy intermediate-scale quantum (NISQ) devices, the number of physical qubits is often the binding constraint, and connectivity and coherence limitations make additional ancilla registers costly or, in extreme cases, infeasible. In this regime, the in-place circuit of \cite{cryptoeprint:2026/1007}, which requires no additional qubits beyond the state and key registers, may be the more practical choice despite its greater depth.
+
+On fault-tolerant hardware, however, circuit depth is typically the dominant cost driver: each additional layer of gates increases the computation's exposure to decoherence and, for architectures relying on quantum error correction, increases the number of error-correction cycles that must be executed before a logical operation completes. Ancilla qubits, by comparison, are relatively inexpensive to provision once a fault-tolerant architecture with a sufficiently large logical-qubit budget is available. In this setting, the proposed out-of-place circuit is the more attractive design, trading a bounded, one-time increase in qubit count for a substantial and compounding reduction in depth across all rounds of the cipher (Section~\ref{subsec:compounding-effect}).
+
+Grover's algorithm, the primary cryptanalytic application considered in this work (Chapter~\ref{ch:experimental-results}), requires the oracle circuit to be repeated on the order of $2^{n/2}$ times. Since gate count and depth accumulate multiplicatively with the number of iterations while qubit count remains fixed after initial allocation, the depth reduction offered by the out-of-place design is expected to be especially valuable in this context: the qubit cost is paid only once, while the depth savings compound across every Grover iteration.

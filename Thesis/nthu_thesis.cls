@@ -29,7 +29,7 @@
 \usepackage{tabularx}
 % Define a new centered column type with identical distributed widths
 \newcolumntype{C}{>{\centering\arraybackslash}X} 
-
+\usepackage{rotating}
 
 
 
@@ -136,6 +136,7 @@
 \usepackage[english]{babel}   %needed for above line
 
 \usepackage{amsmath, amsthm, amssymb}   % improve math presentation
+\newtheorem{proposition}{Proposition}
 \usepackage{ulem, CJKulem}              % 下劃線、雙下劃線與波浪紋效果
 
 \usepackage{booktabs}                   % 改善表格設置

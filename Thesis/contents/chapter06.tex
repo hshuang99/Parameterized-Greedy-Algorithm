@@ -1,152 +1,409 @@
 \chapter{Experimental Results}
 \label{ch:experimental-results}
 
-\section{Experimental Setup}
+In this chapter, we present the experimental results, including circuit depth for generalized block ciphers, MDS-matrix-based block ciphers, and quantum resource estimates for the KLEIN family. All experiments were conducted on a system equipped with an AMD Ryzen™ 9 7940HS processor, running Ubuntu 24.04.4 LTS as the guest operating system, with 32 GB of RAM.
 
-In this section, we would like to show you 
+\section{Depth and CNOT Count Comparison for Generalized Block Ciphers}
 
-\section{Depth}
-
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
     \begin{tabular}{ >{\centering\arraybackslash}m{3.5cm} >{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{2cm} }
     % \begin{tabular}{ c c c c c c }
         \hline
         Cipher & Size & Q\# & \cite{9475957} & \cite{cryptoeprint:2024/381} & \textbf{Our Algorithm} \\
         \hline
-        AES & 32 & 30/92 & 12/128 & 10/131 & \color{red}\textbf{9/109} \\ 
-        FOX MU4 & 32 & 55/136 & 21/200 & 21/265 & \color{red}\textbf{19/191} \\
-        TWOFISH & 32 & 37/111 & 18/187 & \textbf{15}/175 & \color{red}\textbf{15/162}\\
-        WHIRLWIND M0 & 32 & 65/183 & 28/\textbf{286} & 28/331 & \textcolor{red}{\textbf{25}}/324 \\
-        WHIRLWIND M1 & 32 & 69/190 & 25/279 & \textbf{22}/290 & \textcolor{red}{\textbf{22}}/253\\
+        AES\cite{daemen2002design} & 32 & 30/92 & 12/128 & 10/131 & \color{red}\textbf{9/109} \\ 
+        FOX MU4\cite{junod2004fox} & 32 & 55/136 & 21/200 & 21/265 & \color{red}\textbf{19/191} \\
+        QARMA128\cite{avanzi2017qarma} & 32 & 6/48 & 3/48 & 3/48 & 3/48\\
+        TWOFISH\cite{schneier1998twofish} & 32 & 37/111 & 18/187 & 15/175 & 15/\color{red}\textbf{162}\\
+        WHIRLWIND M0\cite{barreto2010whirlwind} & 32 & 65/183 & 28/\textbf{286} & 28/331 & \textcolor{red}{\textbf{25}}/324 \\
+        WHIRLWIND M1\cite{barreto2010whirlwind} & 32 & 69/190 & 25/279 & 22/290 & 22/\textcolor{red}{\textbf{253}}\\
+        JOLTIK\cite{jean2015joltik} & 16 & 20/44 & 9/48 & 7/52 & 7/{\textbf{48}}\\
+        MIDORI\cite{banik2015midori} & 16 & 3/24 & 3/24 & 3/24 & 3/24 \\
+        SmallScale AES\cite{cid2005small} & 16 & 20/43 & 11/59 & 10/62 & \textcolor{red}{\textbf{8/51}}\\
+        PRIDE L3\cite{albrecht2014block} & 16 & 6/24 & 3/24 & 3/24 & 3/24\\
+        PRINCE M1\cite{borghoff2012prince} & 16 & 6/24 & 3/24 & 3/24 & 3/24\\
+        SKINNY\cite{beierle2016skinny} & 16 & 3/12 & 3/12 & 3/12 & 3/12\\
     \hline
 \end{tabular}
     \caption{Comparison of the depth/gate-count of CNOT circuits for block ciphers}
     \label{tab:block-ciphers table}
 \end{table}
 
+We executed our approach tens of thousands of times to obtain the results in Table~\ref{tab:block-ciphers table}. We use red text to indicate where our results outperform others, and we highlight the case of AES MixColumns in particular: Shi and Feng's depth-10 quantum circuit is shown in Appendix~\ref{fig:depth_10_MixColumns}, while our depth-9 result is shown in Appendix~\ref{fig:depth_9_MixColumns}.
 
-\begin{table}
+\section{Depth and CNOT Count Comparison for MDS Matrices}
+
+\begin{table}[H]
     \centering
-    \scalebox{0.78}{
+    \begin{tabular}{ >{\centering\arraybackslash}m{4cm} >{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{0.5cm} >{\centering\arraybackslash}m{0.5cm} >{\centering\arraybackslash}m{0.5cm} >{\centering\arraybackslash}m{2cm} }
+    % \begin{tabular}{ c c c c c c }
+        \hline
+        Cipher & Size & \cite{cryptoeprint:2023/165} & \cite{9475957} & \cite{cryptoeprint:2024/381} & \textbf{Our Algorithm} \\
+        \hline
+        \multicolumn{6}{c}{$4 \times 4$ matrices in $GF(4, \mathbb{F}_{2})$}\\
+        \hline
+        C\_BeiKraLea16\cite{cryptoeprint:2016/119} & 16 & 21/41 & 12/57 & 10/59 & {\color{red}\textbf{9}}/\textbf{51}\\
+        FSE\_LiuSim16\cite{cryptoeprint:2016/186} & 16 & 26/41 & 12/65 & 11/63 & {\color{red}\textbf{10}}/\textbf{59}\\
+        FSE\_LiWang16\cite{cryptoeprint:2016/406} & 16 & 27/44 & 12/65 & 11/62 & {\color{red}\textbf{10}}/\textbf{60}\\
+        JeaPeySim\cite{cryptoeprint:2017/101} (Involutory) & 16 & 14/41 & 13/54 & 9/54 & {\color{red}\textbf{7}}/\textbf{48}\\
+        FSE\_LiWang16\cite{cryptoeprint:2016/406} (Involutory) & 16 & 25/44 & 9/48 & 7/52 & 7/\textbf{48}\\
+        \hline
+        \multicolumn{6}{c}{$4 \times 4$ matrices in $GF(8, \mathbb{F}_{2})$}\\
+        \hline
+        FSE\_LiuSim16\cite{cryptoeprint:2016/186} & 32 & 54/121 & 23/203 & 21/235 & {\color{red}\textbf{20}}/238\\
+        FSE\_SKOP15\cite{cryptoeprint:2015/258} & 32 & 20/90 & 11/118 & 10/112 & {\color{red}\textbf{9}}/117\\
+        JeaPeySim\cite{cryptoeprint:2017/101} (Involutory) & 32 & 14/83 & 13/108 & 9/102 & 9/\textbf{98}\\
+        FSE\_LiWang16\cite{cryptoeprint:2016/406} (Involutory) & 32 & 19/87 & 8/98 & 8/99 & {\color{red}\textbf{7}}/\textbf{96}\\
+        \hline
+        \multicolumn{6}{c}{$8 \times 8$ matrices in $GF(4, \mathbb{F}_{2})$}\\
+        \hline
+        ACISP\_SARSYE17\cite{cryptoeprint:2017/368} & 32 & 44/183 & 33/302 & 29/351 & {\color{red}\textbf{28}}/\textbf{293}\\
+        FSE\_SKOP15\cite{cryptoeprint:2015/258} (Involutory) & 32 & 37/185 & 30/300 & 29/337 & {\color{red}\textbf{26}}/337\\
+    \hline
+\end{tabular}
+    \caption{Comparison of the depth/gate-count of CNOT circuits for MDS matrices.}
+    \label{tab:MDS table}
+\end{table}
+
+For MDS matrices, we similarly use red text to indicate where our work outperforms others, and bold black text to indicate where our results outperform other greedy-algorithm-based approaches in Table~\ref{tab:MDS table}.
+
+\section{Depth and CNOT Count Comparison for KLEIN}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l S[table-format=3] S[table-format=3] S[table-format=1.1]}
+\toprule
+& \multicolumn{2}{c}{\textbf{CNOT count}} & \\
+\cmidrule(lr){2-3}
+\textbf{Implementation} & {\textbf{Per column}} & {\textbf{Full MixNibbles}} & {\textbf{Depth}} \\
+\midrule
+Mukherjee et al.~\cite{cryptoeprint:2026/1007} & {--} & 624 & 156 \\
+Proposed (this work)                       & 111  & 222 & 9   \\
+\midrule
+\textbf{Reduction}                         & {--} & \textbf{2.81$\times$} & \textbf{17.3$\times$} \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of MixNibbles CNOT-synthesis results with\cite{cryptoeprint:2026/1007}.}
+\label{tab:mixnibbles-comparison}
+\end{table}
+
+For the lightweight block cipher KLEIN, our out-of-place design reduces the CNOT count of the MixNibbles layer by 64.4\% and the depth by 94.2\%, as detailed in Table~\ref{tab:mixnibbles-comparison}. The corresponding circuits are shown in Figure~\ref{fig:depth_156_MixNibbles} (original) and Figure~\ref{fig:depth_9_MixNibbles} (ours).
+
+\subsection{Compounding Effect Across Rounds}
+\label{subsec:compounding-effect}
+
+The per-layer improvement reported in Table~\ref{tab:mixnibbles-comparison} applies to a
+single MixNibbles invocation. Since MixNibbles is executed once per round, and KLEIN-64/64,
+KLEIN-64/80, and KLEIN-64/96 respectively perform 12, 16, and 20 rounds, the CNOT and depth
+savings accumulate linearly with the round count. Table~\ref{tab:mixnibbles-full-cipher}
+reports the aggregated MixNibbles-only cost across all rounds for each KLEIN variant.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l S[table-format=2] S[table-format=5] S[table-format=5] S[table-format=1.1] S[table-format=4] S[table-format=3]}
+\toprule
+& & \multicolumn{2}{c}{\textbf{Total CNOT}} & & \multicolumn{2}{c}{\textbf{Total Depth}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){6-7}
+\textbf{Variant} & {\textbf{Rounds}} & {\textbf{Prior work\footnotemark}} & {\textbf{Proposed}} & {\textbf{Reduction}} & {\textbf{Prior work}} & {\textbf{Proposed}} \\
+\midrule
+KLEIN-64/64 & 12 & 7488  & 2664 & 64.4\% & 1872 & 108 \\
+KLEIN-64/80 & 16 & 9984  & 3552 & 64.4\% & 2496 & 144 \\
+KLEIN-64/96 & 20 & 12480 & 4440 & 64.4\% & 3120 & 180 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Cumulative MixNibbles CNOT count and depth across all rounds, by KLEIN variant.}
+\label{tab:mixnibbles-full-cipher}
+\end{table}
+
+Because MixNibbles is applied identically in every round and the per-round CNOT and depth
+figures are constant, the percentage reduction (\SI{64.4}{\percent} CNOT, \SI{94.2}{\percent}
+depth) is invariant with respect to the number of rounds; only the absolute magnitude of the
+savings grows with the cipher variant. For KLEIN-64/96, the proposed circuit eliminates
+\num{8040} CNOT gates and \num{2940} layers of depth attributable to MixNibbles alone,
+relative to the implementation of Mukherjee et al.~\cite{cryptoeprint:2026/1007}.
+
+\paragraph{Impact on the full-cipher totals.}
+Since MixNibbles constitutes one of four components combined in each round (AddRoundKey,
+SubNibbles, MixNibbles, and the key scheduler), substituting the proposed MixNibbles circuit
+into the full-round gate budget of \cite{cryptoeprint:2026/1007} allows the total circuit CNOT
+count to be recomputed directly. Table~\ref{tab:full-cipher-cnot} reports the resulting
+full-cipher CNOT totals, obtained by replacing the 624-CNOT MixNibbles contribution in each
+round with the proposed 222-CNOT implementation while leaving AddRoundKey, SubNibbles, and
+the key scheduler unchanged.
+
+\begin{table}[htbp]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l S[table-format=5] S[table-format=4] S[table-format=2.2]}
+\toprule
+\textbf{Variant} & {\textbf{Original total CNOT}} & {\textbf{Proposed total CNOT}} & {\textbf{Reduction}} \\
+\midrule
+KLEIN-64/64 & 10384 & 5560 & 46.46\si{\percent} \\
+KLEIN-64/80 & 13952 & 7520 & 46.10\si{\percent} \\
+KLEIN-64/96 & 17584 & 9544 & 45.72\si{\percent} \\
+\bottomrule
+\end{tabular}
+}
+\caption{Full-cipher CNOT count with the proposed MixNibbles circuit substituted into the round structure of \cite{cryptoeprint:2026/1007}.}
+\label{tab:full-cipher-cnot}
+\end{table}
+
+The original totals in Table~\ref{tab:full-cipher-cnot} match those reported in
+Table~6 of \cite{cryptoeprint:2026/1007}, confirming that the recomputation is consistent with
+their stated methodology. Despite MixNibbles accounting for only one of four components in
+the round function, its dominant share of the per-round CNOT budget (\SI{72.6}{\percent} of
+the round total in the original design, $624/860$) means that optimizing this single layer
+alone is sufficient to reduce the overall cipher circuit's CNOT count by approximately
+\SI{46}{\percent} across all three KLEIN variants.
+
+\paragraph{A note on depth compounding.}
+Unlike CNOT count, circuit depth does not simply sum across independent components within a
+single round, since gates from different components may be scheduled concurrently where data
+dependencies allow. However, because each round of KLEIN depends on the output of the
+previous round (AddRoundKey of round $i+1$ consumes the MixNibbles output of round $i$),
+successive rounds cannot be parallelized with one another, and the per-round critical-path
+depth accumulates additively across rounds regardless of intra-round scheduling. The
+\SI{94.2}{\percent} depth reduction of the proposed MixNibbles circuit therefore translates
+directly into a reduction of the same magnitude in the portion of the critical path
+attributable to MixNibbles across the full cipher, as shown in
+Table~\ref{tab:mixnibbles-full-cipher}. Establishing the precise reduction in total
+circuit depth, accounting for the interleaving of MixNibbles with AddRoundKey, SubNibbles,
+and the key scheduler within each round, requires a full round-level circuit scheduling
+analysis and is left as a direction for future work.
+
+\section{Benchmarks for Parameterized Greedy Algorithm}
+
+In this section, we present all of the results obtained using our parameterized greedy algorithm, shown in Table~\ref{tab:greedy-algorithm-against-32-block}, \ref{tab:greedy-algorithm-against-16-block}, \ref{tab:greedy-algorithm-against-mds-4x4-gf4}, \ref{tab:greedy-algorithm-against-mds-4x4-gf8}, and \ref{tab:greedy-algorithm-against-mds-8x8-gf4}.
+
+\begin{table}[H]
+    \centering
+    \scalebox{0.9}{
     \begin{tabular}{ c c c c c c } 
         \hline
         Cipher & Cost Function & Row & Column & Row-or-Col & Parallel \\
         \hline
-        \multirow{3}{4em}{AES} & Log &  12/128 & 12/131  & 12/131  & 13/126 \\
+        \multirow{3}{4em}{AES\cite{daemen2002design}} & Log &  12/128 & 12/131  & 12/131  & 13/126 \\
          & Sum & 10/120 & 10/120 & 10/121 & 11/124  \\
-         & Origin & 9/109 & 9/111 & \textbf{9/109} & 9/110  \\
+         & Origin & 9/109 & 9/111 & {\color{red}\textbf{9/109}} & 9/110  \\
          \hline
-         \multirow{3}{4em}{ANUBIS} & Log &  12/126 & 13/127  & \textbf{12/126}  & 13/140 \\
+         \multirow{3}{4em}{ANUBIS\cite{barreto2000anubis}} & Log &  12/126 & 13/127  & {\color{red}\textbf{12/126}}  & 13/140 \\
          & Sum & 14/133 & 13/128 & 13/139 & 12/136  \\
          & Origin & 13/138 & 13/140 & 14/129 & 13/129  \\
          \hline
-         \multirow{3}{4em}{CLEFIA M0} & Log &  \textbf{11}/126 & 11/\textbf{123}  & 11/127  & 12/149 \\
+         \multirow{3}{4em}{CLEFIA M0\cite{shirai2007128}} & Log &  11/126 & 11/{\color{red}\textbf{123}}  & {\color{red}\textbf{11}}/127  & 12/149 \\
          & Sum & 14/138 & 14/140 & 13/132 & 15/145  \\
          & Origin & 13/136 & 14/134 & 12/134 & 14/139  \\
          \hline
-         \multirow{3}{4em}{CLEFIA M1} & Log &  13/129 & 13/129  & 12/129  & 12/128 \\
+         \multirow{3}{4em}{CLEFIA M1\cite{shirai2007128}} & Log &  13/129 & 13/129  & 12/129  & 12/128 \\
          & Sum & 13/130 & 12/136 & 13/128 & 13/137  \\
-         & Origin & 13/129 & 13/127 & \textbf{11/123} & 12/131  \\
+         & Origin & 13/129 & 13/127 & {\color{red}\textbf{11/123}} & 12/131  \\
          \hline
-         \multirow{3}{4em}{FOX MU4} & Log &  20/266 & 20/267 & 21/257 & 21/221 \\
-         & Sum & 19/196 & 20/197 & \textbf{19/191} & 21/212 \\
-         & Origin & 30/313 & 36/324 & 30/283 & 33/327 \\
+         \multirow{3}{4em}{FOX MU4\cite{junod2004fox}} & Log &  20/266 & 20/267 & 21/257 & 21/221 \\
+         & Sum & 19/196 & 20/197 & {\color{red}\textbf{19/191}} & 21/198 \\
+         & Origin & 29/292 & 29/288 & 27/273 & 30/306 \\
          \hline
-         \multirow{3}{4em}{QARMA128} & Log &  3/48 & 3/48 & 3/48 & 3/48 \\
+         \multirow{3}{4em}{QARMA128\cite{avanzi2017qarma}} & Log &  3/48 & 3/48 & 3/48 & 3/48 \\
          & Sum & 3/48 & 3/48 & 3/48 & 3/48 \\
          & Origin & 5/64 & 4/64 & 5/64 & 4/64 \\
          \hline
-         \multirow{3}{4em}{TWOFISH} & Log &  19/231 & 19/212 & 19/211 & 18/232 \\
-         & Sum & \textbf{15/162} & 15/163 & 16/183 & 17/178 \\
-         & Origin & 22/246 & 24/241 &  22/252 & 23/263 \\
+         \multirow{3}{4em}{TWOFISH\cite{schneier1998twofish}} & Log &  18/221 & 18/219 & 18/231 & 18/207 \\
+         & Sum & {\color{red}\textbf{15/162}} & 15/163 & 16/176 & 16/178 \\
+         & Origin & 20/233 & 20/229 &  20/230 & 21/240 \\
          \hline
-         \multirow{3}{4em}{WHIRLWIND M0} & Log &  26/329 & 26/325 & 26/328 & \textbf{25}/324 \\
-         & Sum & 28/294 & 26/\textbf{293} & 29/313 & 32/330 \\
-         & Origin & 39/387 & 52/425 & 43/396 & 43/387 \\
+         \multirow{3}{4em}{WHIRLWIND M0\cite{barreto2010whirlwind}} & Log &  26/324 & 26/325 & 26/327 & {\color{red}\textbf{25}}/324 \\
+         & Sum & 28/{\color{red}\textbf{292}} & 26/293 & 29/305 & 29/317 \\
+         & Origin & 39/389 & 40/387 & 39/376 & 43/387 \\
          \hline
-         \multirow{3}{4em}{WHIRLWIND M1} & Log &  25/321 & 23/291 & 23/286 & 22/296 \\
-         & Sum & 23/268 & 22/265 & \textbf{22/253} & 23/269 \\
-         & Origin & 48/420 & 46/420 & 47/426 & 51/477 \\
-        \hline
-        \multicolumn{6}{c}{$8 \times 8$ matrices in $GF(4)$}\\
-        \hline
-        \multirow{3}{4em}{ACISP\_SarSye17 \cite{cryptoeprint:2017/368}} & Log &  29/415 & 30/404 & 30/403 & 29/378 \\
-         & Sum & \textbf{28/293} & 33/321 & 29/314 & 29/330 \\
-         & Origin & 40/388 & 38/363 & 42/396 & 36/380 \\
-        \hline
-        \multirow{3}{4em}{FSE\_SKOP15 \cite{cryptoeprint:2015/258}} & Log &  29/401 & 30/398 & \textbf{29}/398 & 29/412 \\
-         & Sum & 32/\textbf{314} & 31/328 & 31/317 & 32/346 \\
-         & Origin & 42/409 & 38/396 & 39/393 & 41/410 \\
-        \hline
-        \multirow{3}{4em}{FSE\_SKOP15 (Involutory) \cite{cryptoeprint:2015/258}} & Log &  26/337 & 26/337 & \textbf{26}/353 & 28/373 \\
-         & Sum & 28/300 & 27/305 & 31/337 & 30/\textbf{297} \\
-         & Origin & 40/386 & 39/372 & 37/372 & 37/377 \\
+         \multirow{3}{4em}{WHIRLWIND M1\cite{barreto2010whirlwind}} & Log &  23/290 & 23/286 & 23/286 & 22/296 \\
+         & Sum & 23/256 & 22/265 & {\color{red}\textbf{22/253}} & 23/269 \\
+         & Origin & 38/365 & 37/387 & 37/384 & 37/375 \\
         \hline
     \end{tabular}}
-    \caption{Results of the depth/gate-count of CNOT circuits for 32 block ciphers}
-    \label{Greedy Algorithm Compare 32 Block}
+    \caption{Benchmark of parameterized greedy algorithms for $32\times32$ block ciphers}
+    \label{tab:greedy-algorithm-against-32-block}
     \end{table}
 
-    \begin{table}
+    \begin{table}[H]
         \centering
         \scalebox{0.86}{
         \begin{tabular}{ c c c c c c } 
             \hline
             Cipher & Cost Function & Row & Column & Row-or-Col & Parallel \\
             \hline
-            \multirow{3}{4em}{JOLTIK} & Log &  9/55 & 9/55  & 9/55  & 7/52 \\
+            \multirow{3}{4em}{JOLTIK\cite{jean2015joltik}} & Log &  9/55 & 9/55  & 9/55  & 7/52 \\
              & Sum & 8/52 & 8/52 & 8/52 & 8/52  \\
-             & Origin & 9/48 & 8/52 & 9/48 & 7/48  \\
+             & Origin & 9/48 & 8/52 & 8/52 & {\color{red}\textbf{7/48}}  \\
              \hline
-             \multirow{3}{4em}{MIDORI} & Log &  12/126 & 13/127  & 12/126  & 13/140 \\
-             & Sum & 14/133 & 13/128 & 13/139 & 12/136  \\
-             & Origin & 13/138 & 13/140 & 14/129 & 13/129  \\
+             \multirow{3}{4em}{MIDORI\cite{cryptoeprint:2015/1142}} & Log &  3/24 & 3/24  & 3/24  & 3/24 \\
+             & Sum & 3/24 & 3/24 & 3/24 & 3/24  \\
+             & Origin & 4/32 & 4/32 & 4/32 & 4/32  \\
              \hline
-             \multirow{3}{4em}{SmallScale AES} & Log &  11/126 & 11/123  & 11/127  & 12/149 \\
-             & Sum & 14/138 & 14/140 & 13/132 & 15/145  \\
-             & Origin & 13/136 & 14/134 & 12/134 & 14/139  \\
+             \multirow{3}{4em}{SmallScale AES\cite{cid2005small}} & Log &  11/64 & 11/64  & 11/64  & 10/58 \\
+             & Sum & 9/57 & 9/55 & 9/58 & 9/55  \\
+             & Origin & 9/56 & 9/56 & 9/57 & {\color{red}\textbf{8/51}}  \\
              \hline
-             \multirow{3}{4em}{PRIDE L0} & Log &  13/129 & 13/129  & 12/129  & 12/128 \\
-             & Sum & 13/130 & 12/136 & 13/128 & 13/137  \\
-             & Origin & 13/129 & 13/127 & 11/123 & 12/131  \\
+             \multirow{3}{4em}{PRIDE L0\cite{albrecht2014block}} & Log &  3/24 & 3/24  & 3/24  & 3/24 \\
+             & Sum & 3/24 & 3/24 & 3/24 & 3/24  \\
+             & Origin & 4/32 & 4/32 & 4/32 & 4/32  \\
              \hline
-             \multirow{3}{4em}{PRIDE L1} & Log &  20/266 & 20/267 & 21/257 & 21/221 \\
-             & Sum & 19/196 & 20/197 & 19/191 & 21/212 \\
-             & Origin & 30/313 & 36/324 & 30/283 & 33/327 \\
+             \multirow{3}{4em}{PRIDE L1\cite{albrecht2014block}} & Log &  3/24 & 3/24 & 3/24 & 3/24 \\
+             & Sum & 3/24 & 3/24 & 3/24 & 3/24 \\
+             & Origin & 5/33 & 5/28 & 3/24 & 3/24 \\
              \hline
-             \multirow{3}{4em}{PRIDE L2} & Log &  3/48 & 3/48 & 3/48 & 3/48 \\
-             & Sum & 3/48 & 3/48 & 3/48 & 3/48 \\
-             & Origin & 5/64 & 4/64 & 5/64 & 4/64 \\
+             \multirow{3}{4em}{PRIDE L2\cite{albrecht2014block}} & Log &  3/24 & 3/24 & 3/24 & 3/24 \\
+             & Sum & 3/24 & 3/24 & 3/24 & 3/24 \\
+             & Origin & 3/24 & 3/24 & 3/24 & 3/24 \\
              \hline
-             \multirow{3}{4em}{PRIDE L3} & Log &  19/231 & 19/212 & 19/211 & 18/232 \\
-             & Sum & 15/162 & 15/163 & 16/183 & 17/178 \\
-             & Origin & 22/246 & 24/241 &  22/252 & 23/263 \\
+             \multirow{3}{4em}{PRIDE L3\cite{albrecht2014block}} & Log &  3/24 & 3/24 & 3/24 & 3/24 \\
+             & Sum & 3/24 & 3/24 & 3/24 & 3/24 \\
+             & Origin & 3/24 & 3/24 &  3/24 & 3/24 \\
              \hline
-             \multirow{3}{4em}{PRINCE M0} & Log &  26/329 & 26/325 & 26/328 & 25/324 \\
-             & Sum & 28/294 & 26/293 & 29/313 & 32/330 \\
-             & Origin & 39/387 & 52/425 & 43/396 & 43/387 \\
+             \multirow{3}{4em}{PRINCE M0\cite{borghoff2012prince}} & Log &  3/24 & 3/24 & 3/24 & 3/24 \\
+             & Sum & 3/24 & 3/24 & 3/24 & 3/24 \\
+             & Origin & 4/26 & 4/26 & 4/26 & 4/26 \\
              \hline
-             \multirow{3}{4em}{PRINCE M1} & Log &  25/321 & 23/291 & 23/286 & 22/296 \\
-             & Sum & 23/268 & 22/265 & 22/253 & 23/269 \\
-             & Origin & 48/420 & 46/420 & 47/426 & 51/477 \\
+             \multirow{3}{4em}{PRINCE M1\cite{borghoff2012prince}} & Log &  3/24 & 3/24 & 3/24 & 3/24 \\
+             & Sum & 3/24 & 3/24 & 3/24 & 3/24 \\
+             & Origin & 4/26 & 4/26 & 4/26 & 4/26 \\
             \hline
-            \multirow{3}{4em}{QARMA64} & Log &  25/321 & 23/291 & 23/286 & 22/296 \\
-             & Sum & 23/268 & 22/265 & 22/253 & 23/269 \\
-             & Origin & 48/420 & 46/420 & 47/426 & 51/477 \\
+            \multirow{3}{4em}{QARMA64\cite{avanzi2017qarma}} & Log &  3/24 & 3/24 & 3/24 & 3/24 \\
+             & Sum & 3/24 & 3/24 & 3/24 & 3/24 \\
+             & Origin & 6/48 & 6/48 & 5/40 & 3/24 \\
             \hline
-            \multirow{3}{4em}{SKINNY} & Log &  25/321 & 23/291 & 23/286 & 22/296 \\
-             & Sum & 23/268 & 22/265 & 22/253 & 23/269 \\
-             & Origin & 48/420 & 46/420 & 47/426 & 51/477 \\
+            \multirow{3}{4em}{SKINNY\cite{beierle2016skinny}} & Log &  3/12 & 3/12 & 3/12 & 3/12 \\
+             & Sum & 3/12 & 3/12 & 3/12 & 3/12 \\
+             & Origin & 6/28 & 6/28 & 6/28 & 5/24 \\
             \hline
         \end{tabular}}
-        \caption{Results of the depth/gate-count of CNOT circuits for 16 block ciphers}
-        \label{Greedy Algorithm Compare 16 Block}
+        \caption{Benchmark of parameterized greedy algorithms for $16\times16$ block ciphers}
+        \label{tab:greedy-algorithm-against-16-block}
         \end{table}
 
 
-\section{Quantum Circuits}
-\begin{table}[h!]
+        \begin{table}[H]
+        \centering
+        \scalebox{0.9}{
+        \begin{tabular}{ c c c c c c } 
+            \hline
+            Cipher & Cost Function & Row & Column & Row-or-Col & Parallel \\
+            \hline
+            \multicolumn{6}{c}{$4 \times 4$ matrices in $GF(4, \mathbb{F}_{2})$}\\
+            \hline
+            \multirow{3}{4em}{C\_BeiKraLea16\cite{cryptoeprint:2016/119}} & Log &  12/72 & 9/52  & 12/72  & 10/57 \\
+             & Sum & 9/55 & 12/72 & {\color{red}\textbf{9/51}} & 9/52  \\
+             & Origin & 12/61 & 11/64 & 11/63 & 11/59  \\
+             \hline
+             \multirow{3}{4em}{JeaPeySim\cite{cryptoeprint:2017/101}} & Log &  9/60 & 9/60  & 9/60  & 8/48 \\
+             & Sum & 8/47 & 8/47 & 8/47 & 8/47  \\
+             & Origin & 9/54 & 9/54 & 10/59 & 9/54  \\
+             \hline
+             \multirow{3}{4em}{FSE\_LiuSim16\cite{cryptoeprint:2016/186}} & Log &  10/64 & 10/64  & 10/64  & 10/{\color{red}\textbf{59}} \\
+             & Sum & 10/60 & 10/60 & 10/60 & 10/64  \\
+             & Origin & 12/64 & 12/64 & 12/68 & 12/66  \\
+             \hline
+             \multirow{3}{4em}{FSE\_SKOP15\cite{cryptoeprint:2015/258}} & Log &  13/67 & 13/67  & 13/67  & {\color{red}\textbf{8}}/56 \\
+             & Sum & 9/54 & 9/54 & 9/53 & 9/{\color{red}\textbf{53}}  \\
+             & Origin & 11/69 & 11/62 & 11/69 & 12/65  \\
+             \hline
+             \multirow{3}{4em}{FSE\_LiWang16\cite{cryptoeprint:2016/406}} & Log &  10/64 & 10/64 & 10/64 & 10/60 \\
+             & Sum & 10/60 & 10/60 & 10/60 & 10/60 \\
+             & Origin & 12/64 & 12/64 & 12/71 & 13/73 \\
+             \hline
+             \multirow{3}{4em}{JeaPeySim\cite{cryptoeprint:2017/101} (Involutory)} & Log &  9/54 & 9/54 & 9/54 & 8/56 \\
+             & Sum & 8/47 & 8/47 & 8/{\color{red}\textbf{47}} & {\color{red}\textbf{7}}/48 \\
+             & Origin & 10/56 & 10/59 & 10/56 & 9/60 \\
+             \hline
+             \multirow{3}{4em}{FSE\_LiWang16\cite{cryptoeprint:2016/406} (Involutory)} & Log &  9/55 & 9/55 & 9/55 & 7/48 \\
+             & Sum & 7/52 & 8/51 & 8/52 & 7/48 \\
+             & Origin & 9/48 & 8/52 &  8/52 & 7/48 \\
+             \hline
+        \end{tabular}}
+        \caption{Benchmark of parameterized greedy algorithms for MDS matrices with $4 \times 4$ in $GF(4, \mathbb{F}_{2})$}
+        \label{tab:greedy-algorithm-against-mds-4x4-gf4}
+        \end{table}
+
+        \begin{table}[H]
+        \centering
+        \scalebox{0.9}{
+        \begin{tabular}{ c c c c c c } 
+            \hline
+            Cipher & Cost Function & Row & Column & Row-or-Col & Parallel \\
+            \hline
+            \multicolumn{6}{c}{$4 \times 4$ matrices in $GF(8, \mathbb{F}_{2})$}\\
+            \hline
+            \multirow{3}{4em}{C\_BeiKraLea16\cite{cryptoeprint:2016/119}} & Log &  19/243 & 19/245  & 20/246  & 20/228 \\
+             & Sum & 21/208 & 21/210 & 21/211 & {\color{red}\textbf{19/198}}  \\
+             & Origin & 26/250 & 24/245 & 25/251 & 25/256  \\
+             \hline
+             \multirow{3}{4em}{JeaPeySim\cite{cryptoeprint:2017/101}} & Log &  9/124 & 9/124  & 9/124  & 9/99 \\
+             & Sum & 9/102 & 9/99 & 9/100 & {\color{red}\textbf{9/98}}  \\
+             & Origin & 11/120 & 12/121 & 12/121 & 12/123  \\
+             \hline
+             \multirow{3}{4em}{FSE\_LiuSim16\cite{cryptoeprint:2016/186}} & Log &  20/238 & 21/230  & {\color{red}\textbf{20}}/255  & 21/249 \\
+             & Sum & 22/215 & 21/{\color{red}\textbf{213}} & 22/219 & 21/228  \\
+             & Origin & 28/258 & 28/250 & 27/251 & 26/264  \\
+             \hline
+             \multirow{3}{4em}{FSE\_LiWang16\cite{cryptoeprint:2016/406}} & Log &  16/191 & 15/207 & 16/195 & {\color{red}\textbf{14}}/167 \\
+             & Sum & 14/157 & 14/{\color{red}\textbf{149}} & 15/152 & 15/159 \\
+             & Origin & 24/207 & 19/203 & 18/188 & 17/180 \\
+             \hline
+             \multirow{3}{4em}{FSE\_SKOP15\cite{cryptoeprint:2015/258}} & Log &  13/157 & 14/158  & 13/159  & 11/121 \\
+             & Sum & 11/116 & {\color{red}\textbf{11/112}} & 11/116 & 11/121  \\
+             & Origin & 16/152 & 16/152 & 16/149 & 17/157  \\
+             \hline
+             \multirow{3}{4em}{JeaPeySim\cite{cryptoeprint:2017/101} (Involutory)} & Log &  9/108 & 9/108  & 9/108  & 9/118 \\
+             & Sum & 9/101 & 9/99 & 9/101 & {\color{red}\textbf{9/98}}  \\
+             & Origin & 11/137 & 12/136 & 12/136 & 13/140  \\
+             \hline
+             \multirow{3}{4em}{FSE\_LiWang16\cite{cryptoeprint:2016/406} (Involutory)} & Log &  8/100 & 8/100 & 8/100 & {\color{red}\textbf{7/96}} \\
+             & Sum & 8/98 & 8/98 & 8/98 & 7/97 \\
+             & Origin & 8/99 & 8/98 & 8/99 & 7/96 \\
+             \hline
+             \multirow{3}{4em}{KLEIN\cite{cryptoeprint:2026/1007}} & Log &  12/128 & 12/128  & 12/128  & 11/121 \\
+             & Sum & 11/120 & 10/118 & 11/120 & 11/121  \\
+             & Origin & 9/{\color{red}\textbf{111}} & 10/113 & 9/112 & {\color{red}\textbf{9}}/114  \\
+             \hline
+        \end{tabular}}
+        \caption{Benchmark of parameterized greedy algorithms for MDS matrices with $4 \times 4$ in $GF(8, \mathbb{F}_{2})$}
+        \label{tab:greedy-algorithm-against-mds-4x4-gf8}
+        \end{table}
+
+        \begin{table}[H]
+        \centering
+        \scalebox{0.9}{
+        \begin{tabular}{ c c c c c c } 
+            \hline
+            Cipher & Cost Function & Row & Column & Row-or-Col & Parallel \\
+            \hline
+            \multicolumn{6}{c}{$8 \times 8$ matrices in $GF(4, \mathbb{F}_{2})$}\\
+            \hline
+            \multirow{3}{4em}{ACISP\_SARSYE17\cite{cryptoeprint:2017/368}} & Log &  29/415 & 30/404  & 30/403  & 29/378 \\
+             & Sum & {\color{red}\textbf{28/293}} & 33/321 & 31/309 & 29/330  \\
+             & Origin & 40/388 & 38/363 & 42/396 & 36/380  \\
+             \hline
+             \multirow{3}{4em}{FSE\_SKOP15\cite{cryptoeprint:2015/258}} & Log &  29/401 & 30/398  & {\color{red}\textbf{29}}/398  & 29/412 \\
+             & Sum & 32/{\color{red}\textbf{314}} & 31/328 & 31/317 & 32/346  \\
+             & Origin & 42/409 & 38/396 & 39/393 & 41/410  \\
+             \hline
+             \multirow{3}{4em}{FSE\_SKOP15\cite{cryptoeprint:2015/258} (Involutory)} & Log &  26/337 & 26/337  & {\color{red}\textbf{26}}/353  & 28/373 \\
+             & Sum & 28/300 & 27/305 & 31/337 & 30/{\color{red}\textbf{297}}  \\
+             & Origin & 40/386 & 39/372 & 37/372 & 37/377  \\
+             \hline
+        \end{tabular}}
+        \caption{Benchmark of parameterized greedy algorithms for MDS matrices with $8 \times 8$ in $GF(4, \mathbb{F}_{2})$}
+        \label{tab:greedy-algorithm-against-mds-8x8-gf4}
+        \end{table}
+
+
+\section{Operations of Quantum Circuits}
+
+In this section, we present the operations at each depth for AES MixColumns in Table~\ref{tab:depth-9-operations-aes-mixcolumns}, and for KLEIN MixNibbles in Table~\ref{tab:depth-9-operations-klein-mixnibbles}. Several operations are shared between the two circuits, which reflects the structural relationship between these two matrices.
+
+\begin{table}[htbp]
 \centering
 \begin{tabular}{||c c c c c||} 
  \hline
@@ -179,5 +436,41 @@ In this section, we would like to show you
  \hline
 \end{tabular}
 \caption{The implementation of AES MixColumns with quantum depth 9}
-\label{Depth_9_Operations}
+\label{tab:depth-9-operations-aes-mixcolumns}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{||c c c c c||} 
+ \hline
+ Operation & Operation & Operation & Operation & Operation \\ [0.5ex] 
+ \hline\hline
+ \textbf{Depth 1} & (30, 6) & (14, 13) & (21, 14) & (24, 25) \\ 
+ (31, 23) & (27, 11) & (7, 31) & (13, 5) & (10, 18) \\
+ (30, 14) & (8, 0) & (0, 6) & (2, 3) & (20, 28) \\
+ (6, 22) & (18, 10) & (16, 24) & \textbf{Depth 7} & (22, 14) \\
+ (15, 7) & (9, 25) & (11, 2) & (30, 23) & (16, 9)\\
+ (20, 4) & (28, 20)& (3, 27) & (25, 9) & (4, 12)\\
+ (29, 21) & (14, 22) & (12, 19) & (13, 6) & (2, 26)\\
+ (28, 12) & (12, 4) & (17, 23) & (24, 17) & \textbf{Depth 9}\\
+ (13, 5) & (26, 2) & (25, 1) & (1, 2) & (5, 13)\\
+ (2, 18) & (16, 24) & (4, 15) & (31, 19) & (21, 29)\\
+ (17, 9) & \textbf{Depth 3} & (18, 9) & (27, 20) & (22, 6)\\
+ (24, 8) & (5, 12) & \textbf{Depth 5} & (28, 21) & (14, 30)\\
+ (27, 19) & (22, 29) & (6, 7) & (26, 10) & (8, 24)\\
+ (1, 25) & (7, 14) & (15, 3) & (15, 0) & (23, 31)\\
+ (11, 3) & (4, 11) & (31, 20) & \textbf{Depth 8} & (3, 11)\\
+ (26, 10) & (3, 18) & (23, 12) & (17, 1) & (19, 27)\\
+ (16, 0) & (10, 17) & \textbf{Depth 6} & (7, 23) & (7, 15)\\
+ \textbf{Depth 2} & (24, 31) & (6, 15) & (29, 13) & (18, 2)\\
+ (21, 5) & (25, 15) & (31, 9) & (15, 31) & (12, 28)\\
+ (23, 7) & (8, 23) & (28, 4) & (3, 19) & (25, 1)\\
+ (13, 29) & (0, 16) & (30, 22) & (5, 21) & (4, 20)\\
+ (1, 17) & (19, 26) & (23, 11) & (6, 30) & (9, 17)\\
+ (19, 3) & \textbf{Depth 4} & (26, 12) & (11, 27) & (10, 26) \\
+ (31, 15) & (29, 20) & (8, 25) & (0, 8) & (0, 16)\\
+ \hline
+\end{tabular}
+\caption{The implementation of KLEIN MixNibbles with quantum depth 9}
+\label{tab:depth-9-operations-klein-mixnibbles}
 \end{table}

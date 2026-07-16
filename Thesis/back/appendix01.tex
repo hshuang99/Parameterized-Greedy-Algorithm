@@ -1,19 +1,39 @@
 % !TeX root = ../main.tex
 
 \chapter{Quantum Circuits}
-In this section, we would like to show the whole quantum circuits using DrawingEngine.
+In this section, we present the complete quantum circuits, generated using ProjectQ CircuitDrawer.
 
-\section{MixColumns}
-\begin{figure}[h]
+\section{AES/Rijndael MixColumns}
+The depth-10 quantum circuit for AES MixColumns proposed by Haotian Shi and Xiutao Feng is shown in Figure~\ref{fig:depth_10_MixColumns}, while our proposed depth-9 circuit is shown in Figure~\ref{fig:depth_9_MixColumns}.
+
+\begin{figure}[htbp]
         \centering
         \includegraphics[width=1.06\textwidth]{figures/Shi&Feng_Mixcolumn_circuit_mark.pdf}
         \caption{Quantum Circuit of AES MixColumns for depth 10}
         \label{fig:depth_10_MixColumns}
     \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=1.09\textwidth]{figures/Mixcolumn_circuit_depth_9_mark.pdf}
     \caption{Our appaorach for depth 9}
     \label{fig:depth_9_MixColumns}
+\end{figure}
+
+\section{KLEIN MixNibbles}
+
+The depth-156 quantum circuit for KLEIN MixNibbles proposed by Mukherjee et al. is shown in Figure~\ref{fig:depth_156_MixNibbles}, while our proposed depth-9 circuit is shown in Figure~\ref{fig:depth_9_MixNibbles}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.51\textwidth, angle=90]{figures/origin_MixNibbles_circuit.pdf}
+    \caption{Quantum Circuit Implementation on KLEIN MixNibbles for depth 156}
+    \label{fig:depth_156_MixNibbles}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.09\textwidth]{figures/Our_MixNibbles_circuit.pdf}
+    \caption{Our appaorach for MixNibbles with depth 9}
+    \label{fig:depth_9_MixNibbles}
 \end{figure}
